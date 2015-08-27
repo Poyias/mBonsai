@@ -3,7 +3,6 @@
 #include "../DArray/mBonsai_recursive/DArray.h"
 #include "../DArray/mBonsai_recursive/subLayer.h"
 #include "limits.h"
-#include <stack>
 
 using namespace sdsl;
 
