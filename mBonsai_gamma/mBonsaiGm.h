@@ -15,8 +15,9 @@ bool isPrime(unsigned long long input);
 unsigned long long nextPrimeNumber(unsigned long long inputNumber);
 void insertTrans(Transaction *t);
 unsigned long long setAddress(unsigned long long initAd, unsigned int DIVM, unsigned int itemID);
-unsigned long long mBonsaiGm::searchItem(unsigned long long initAd, unsigned int DIVM, unsigned int itemID);
-vector<unsigned int> mBonsaiGm::getVector(string s);
+unsigned long long searchItem(unsigned long long initAd, unsigned int DIVM, unsigned int itemID);
+void searchBench(char * file);
+vector <unsigned int> getVector(string s);
 
 int_vector<SLEN> hashTable;
 blockedDArray *D;
@@ -25,6 +26,8 @@ Data* data ;
 unsigned long long sigma;
 unsigned long long M;
 unsigned int nodeNumberCount;
+ unsigned int searchItems;
+ unsigned int searchTrans;
 
 private:
 

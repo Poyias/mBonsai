@@ -99,6 +99,7 @@ unsigned long long mBonsaiGm::nextPrimeNumber(unsigned long long inputNumber){
 void mBonsaiGm::readDataset()
 {
 	unsigned int tranCount=0;
+		cout<<"entered readDataset"<<endl;
 	while(Transaction *t = data->getNext()) {
 		insertTrans(t);
 		delete t;
@@ -107,6 +108,7 @@ void mBonsaiGm::readDataset()
 
 void mBonsaiGm::insertTrans(Transaction *t)
 {
+
 	hashFunction *key = new hashFunction();
 	unsigned long long prevInitAd=randRootAdrs;
 
@@ -114,8 +116,7 @@ void mBonsaiGm::insertTrans(Transaction *t)
 	{
 		key->getKey(prevInitAd, t->t[i],M,prime,a);
 		prevInitAd=setAddress(key->initAd, key->quotient,t->t[i]);
-		//prevInitAd=key->initAd;
-		
+	
 	}// end first for
 	delete key;
 }// end of manageDeltaTrie
@@ -145,15 +146,14 @@ unsigned long long mBonsaiGm::setAddress(unsigned long long initAd, unsigned int
 		else if ( (hashTable[initAd]==DIVM)  && (initAd!=randRootAdrs) )
 		{
 			// item found don't set DArray
-			if (DCount==D->get(initAd)){
-			   //(DCount==D[initAd]){
+			if (DCount==D->get(initAd))
+			{
 				return initAd;
 			}else{
 				DCount++;
 				initAd++;
 				if (initAd>=M)	initAd=0;
-			}
-				
+			}		
 		}
 		else
 		{
@@ -165,7 +165,7 @@ unsigned long long mBonsaiGm::setAddress(unsigned long long initAd, unsigned int
 	
 }//end setAddress
 
-/*
+
 vector<unsigned int> mBonsaiGm::getVector(string s){
   char* cstr, *p;
   vector<unsigned int> items;
@@ -179,7 +179,32 @@ vector<unsigned int> mBonsaiGm::getVector(string s){
   delete[] cstr;
   return items;
 }
-*/
+
+void mBonsaiGm::searchBench(char* file)
+{ 
+	ifstream infile;
+	infile.open(file);
+	vector <unsigned int> str;
+	string rawData;
+
+	while(getline(infile,rawData))
+	{  
+		str=getVector(rawData);
+		hashFunction *key = new hashFunction();
+		unsigned long long prevInitAd=randRootAdrs;
+		
+		for(int i=0; i<str.size();++i)
+		{		
+			key->getKey(prevInitAd, (unsigned long long)str[i],M,prime,a);
+			prevInitAd=searchItem(key->initAd, key->quotient,str[i]);
+		}// end for
+		delete key;
+		str.clear();	
+	}	
+}//end searchBench
+
+
+
 unsigned long long mBonsaiGm::searchItem(unsigned long long initAd, unsigned int DIVM, unsigned int itemID){
 
 	unsigned int DCount=0;

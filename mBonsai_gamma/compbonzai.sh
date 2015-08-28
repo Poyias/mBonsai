@@ -16,11 +16,11 @@ echo comp data
 g++ -O3 -Wall -fpermissive -std=c++11 -w -Wall  -Wextra  -DNDEBUG  -g -ffast-math -funroll-loops -msse4.2 -I/home/eshime/include -L/home/eshime/lib  mBonsaiGm.cpp -c -lsdsl -ldivsufsort -ldivsufsort64 -DSLEN=13 
 
 echo comp mBonsaiGm
-g++ -O3 -Wall -fpermissive -std=c++11 -w -Wall  -Wextra  -DNDEBUG  -g -ffast-math -funroll-loops -msse4.2 -I/home/eshime/include -L/home/eshime/lib  data.o gammaBlock.o blockedDArray.o hashFunction.o mBonsaiGm.o main.cpp -o mBonsaiGm -lsdsl -ldivsufsort -ldivsufsort64 -DSLEN=13 
+g++ -O3 -Wall -fpermissive -std=c++11 -w -Wall  -Wextra  -DNDEBUG  -g -ffast-math -funroll-loops -msse4.2 -I/home/eshime/include -L/home/eshime/lib  data.o gammaBlock.o blockedDArray.o mBonsaiHash.o mBonsaiGm.o main.cpp -o mBonsaiGm -lsdsl -ldivsufsort -ldivsufsort64 -DSLEN=13 
 
 echo ready to run
-./mBonsaiGm 35004 300 ../../../../Desktop/sortedMushroom.dat 0.8 256 
 
+./mBonsaiGm 4242318 442 ../datasets/sortedAccidents.dat 0.8 256 ../datasets/sortedAccidents.dat
 #./mBonsaiGm 3095560  3 5 /cxml-data/ap480/Datasets/dnaStrings/SRR034939.txt 0.8 256
 #./mBonsaiGm 21005059 3 5 /cxml-data/ap480/Datasets/dnaStrings/SRR034944.txt 0.8 256
 #./mBonsaiGm 1556235309 3 5 /cxml-data/ap480/Datasets/dnaStrings/SRR034940_1.txt 0.8 256

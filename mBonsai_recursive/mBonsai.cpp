@@ -54,7 +54,6 @@ bool mBonsai::isPrime(unsigned long long input){
 unsigned long long mBonsai::nextPrimeNumber(unsigned long long inputNumber){
 	unsigned long long nextPrimeNumber;
 	if(inputNumber<=0){
-	  //cout<<"The number you have entered is zero or negative.\n";
 	}else{
 		while(inputNumber != 0){
 			nextPrimeNumber = inputNumber + 1;		 
@@ -75,15 +74,18 @@ unsigned long long mBonsai::nextPrimeNumber(unsigned long long inputNumber){
 */
 void mBonsai::build()
 {
-	int x=93;
+	int xTrans=0;
+	int xItems=0;
 	//build phase
-	while(--x) 
+	while(Transaction *t = data->getNext()) 
 	{
-		Transaction *t = data->getNext();
 		insert(t);
+		xItems += t->length;
 		delete t;
+		xTrans++;
 	}
 	delete data;
+	cout<<"xTrans: "<<xTrans<<" xItems: "<< xItems<<endl;
 }
 /* 
  * called in build()
@@ -196,28 +198,27 @@ vector<unsigned int> mBonsai::getVector(string s){
 
 void mBonsai::searchBench(char* file)
 { 
-	searchItems=0;
-	searchTrans=0;
 	ifstream infile;
 	infile.open(file);
 	vector <unsigned int> str;
 	string rawData;
-	cout<<"file2: "<<file<<endl;
+
 	while(getline(infile,rawData))
 	{  
 		str=getVector(rawData);
 		hashFunction *key = new hashFunction();
 		unsigned long long prevInitAd=randRootAdrs;
+		
 		for(int i=0; i<str.size();++i)
 		{
+		
 			key->getKey(prevInitAd, (unsigned long long)str[i],M,prime,a);
 			prevInitAd=searchItem(key->initAd, key->quotient,str[i]);
+				//cout<<"Errooor"<<endl;
 		}// end for
-		searchItems+=str.size();
-		++searchTrans;
 		delete key;
 		str.clear();	
-	}
+	}	
 }//end searchBench
 
 /* During the search Benchmarking of Bonsai
@@ -230,6 +231,7 @@ unsigned long long mBonsai::searchItem(unsigned long long initAd, unsigned int D
 	while(true){
 		//EMPTY LOC so item not Found
 		if(hashTable[initAd]==emptyLoc && (initAd!=randRootAdrs)){
+		      cout<<"error"<<endl;
 	  	      return valNotFound;
 		// check if it alreadey exists 
 		}else if((hashTable[initAd]==DIVM)&&(initAd!=randRootAdrs)){	
@@ -267,8 +269,8 @@ unsigned long long mBonsai::searchItem(unsigned long long initAd, unsigned int D
 			}
 		}
 		// NOT EMPTY_LOC NOT SAME_DIV move to next one
-		}else if(DCount>M){
-	  		return valNotFound;
+		//}else if(DCount>M){
+	  	//	return valNotFound;
 		}else{
 			++DCount;
 			++initAd;

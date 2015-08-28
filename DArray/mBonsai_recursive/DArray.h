@@ -1,4 +1,3 @@
-//#include "BitArrayBlock.h"
 #include "sdsl/int_vector.hpp"
 
 

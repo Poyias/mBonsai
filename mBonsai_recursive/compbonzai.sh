@@ -15,12 +15,9 @@ echo comp mBonsai
 
 g++ -O6 -Wall -fpermissive -std=c++11 -w -Wall  -Wextra  -DNDEBUG  -g -ffast-math -funroll-loops -msse4.2 -I/home/eshime/include -L/home/eshime/lib subLayer.o DArray.o mBonsaiHash.o data.o mBonsai.o main.cpp -o mBonsai -lsdsl -ldivsufsort -ldivsufsort64 -DSLEN=15 -DDARRAYSIZE=3 -DSLEN2=5 -DSAT=7
 echo ready to run
-
-#./mBonsai 35004 300 ../../../../Desktop/sortedMushroom.dat 0.8 searchFile 
-#./mBonsai 38610 300 ../../../../Desktop/sortedChess.dat 0.8 searchFile 
-#./mBonsai 4242318 442 ../../../../Desktop/sortedAccidents.dat 0.8 756665 #9,2,3,7
-./mBonsai 653217 16471 ../../../../Desktop/sortedRetail.dat 0.8 searchFile
-#./mBonsai 63985704 5577 ../../../../Desktop/sortedWebdocs8.dat 0.8 11454600 
+ 
+./mBonsai 4242318 442 ../datasets/sortedAccidents.dat 0.8 .../datasets/sortedAccidents.dat  #756665 #9,2,3,7
+./mBonsai 63985704 5577 ../datasets/sortedWebdocs8.dat 0.8 ../datasets/sortedWebdocs8.dat 
 
 ################
 #g++ -O6 -Wall -fpermissive -std=c++11 -w -Wall  -Wextra  -DNDEBUG  -g -ffast-math -funroll-loops -msse4.2 -I/home/eshime/include -L/home/eshime/lib mBonsai.cpp -c -lsdsl -ldivsufsort -ldivsufsort64 -DSLEN=9 -DDARRAYSIZE=3 -DSLEN2=5 -DSAT=7  
