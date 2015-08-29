@@ -11,9 +11,9 @@ It is an improved implementation of Bonsai in terms
 
 #m-Bonsai approaches:
 1. m-Bonsai(recursive):
-* Fast and compact approach.
+    Fast and compact approach.
 2. m-Bonsai (gamma):
-* Even more compact approach but slower than m-Bonsai(recursive).
+    Even more compact approach but slower than m-Bonsai(recursive).
 
 ###Installation
 
