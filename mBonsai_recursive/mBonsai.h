@@ -9,33 +9,37 @@ using namespace sdsl;
 class mBonsai {
 
 public:
+//structure
+int_vector<SLEN> hashTable;
+DArray *D; //displacement array 
+SubLayer *sl; //sublayer displacement array 
+map<unsigned int,unsigned int> mapSl; // overflown Displacement
+
+//init
 mBonsai(){}
-
- mBonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,char* file);
+mBonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,char* file);
 void setData(char *file){data = new Data(file);}
-bool isPrime(unsigned long long input);
-unsigned long long nextPrimeNumber(unsigned long long inputNumber);
 
+//build
 void build();
 void insert(Transaction *t);
 unsigned long long setAddress(unsigned long long initAd, unsigned int DIVM);
+
+//search bencmarks
 void searchBench(char * file);
-vector <unsigned int> getVector(string s);
+vector <unsigned int> getVector(string s); //readio
 unsigned long long searchItem(unsigned long long initAd, unsigned int DIVM, unsigned int itemID);
 
-int_vector<SLEN> hashTable;
+//misc
+bool isPrime(unsigned long long input);
+unsigned long long nextPrimeNumber(unsigned long long inputNumber);
 
-DArray *D;
-SubLayer *sl;
-map<unsigned int,unsigned int> mapSl;
-
-
+//args for printing and counting
 unsigned long long sigma;
 unsigned long long M;
 unsigned int nodeNumberCount;
- unsigned int origNodeCount;
- unsigned int searchItems;
- unsigned int searchTrans;
+unsigned int origNodeCount;
+
 private:
 bool singlepath;
 unsigned int rootID;
@@ -44,7 +48,7 @@ unsigned long long a;
 unsigned long long valNotFound;
 unsigned int randRootAdrs;
 unsigned int emptyLoc;
-Data* data ;
+Data* data; // readio
 };
 
 

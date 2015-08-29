@@ -12,7 +12,6 @@ Bonsai::Bonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,ch
 	lambda=32;
 	cmax= ( ( (lambda*(sigma-1))+lambda-1 ) *M )+(M-1);
 	prime=nextPrimeNumber(cmax);
-
 	a = rand() % M + M; 
 	emptySymbol= lambda*sigma+2;
 	rootID = (unsigned int) lambda*sigma+1;
@@ -74,35 +73,39 @@ unsigned long long Bonsai::nextPrimeNumber(unsigned long long inputNumber){
 	return nextPrimeNumber;
 }//end nextPrimeNumber
 
-void Bonsai::readDataset()
+/* build phase
+ * It goes through the dataset transaction by transaction
+*/
+void Bonsai::build()
 {	
-	//build phase
 	int count=0;
 	while(Transaction *t = data->getNext()) {
 		count++;
 		insert(t,count);
 		delete t;
 	}
-}
+}// end build
 
+/*
+ * Inserts nodes to appropriate positions
+ * handles Virgin and Change bit
+ * handles collisions and groups according to const lambda
+*/
 unsigned int Bonsai::insert (Transaction *t,unsigned int line)
 {
-	//initialize variables
 	unsigned long long prevInitAd=rootAddress;
 	unsigned int prevJ= rootLambda;
 	unsigned int curAddress;
 	unsigned int associatedC;
 	origHash *key = new origHash();
-
-
-	for(unsigned int i=0;i<t->length;i++){
-	  key->getKey(prevInitAd, t->t[i], prevJ,M,prime,a);
-	  
+	for(unsigned int i=0;i<t->length;i++)
+	{
+	  key->getKey(prevInitAd, t->t[i], prevJ,M,prime,a);	  
 	  if (hashTable[ key->initAd]==emptySymbol)
 	    {
 	      hashTable[key->initAd]=key->quotient;
 	      V[key->initAd]=1;
-	      C[key->initAd]=1; //prob not needed
+	      C[key->initAd]=1; 
 	      prevInitAd= key->initAd;
 	      prevJ=0;
 	      nodeNumberCount++;
@@ -155,7 +158,7 @@ unsigned int Bonsai::findSpace(unsigned int cVal,
 	//check if the value is already inserted
 	bool itExists=false;
 	unsigned int tmpSlot;
-	itExists= itemExists(cVal, quotient, initAd);
+	itExists= itemExists(cVal, quotient);
 	//j is 0
 	if (itExists){
 		curEmptySlot=cVal;
@@ -172,7 +175,7 @@ unsigned int Bonsai::findSpace(unsigned int cVal,
 	//go upwards towards the end of the block
 	while (C[curC] == 0)
 	{	
-		itExists= itemExists(curC, quotient, initAd);
+		itExists= itemExists(curC, quotient);
 		if (itExists){
 			curEmptySlot=curC;
 			return lambda+curJ;
@@ -198,8 +201,13 @@ unsigned int Bonsai::findSpace(unsigned int cVal,
 	}
 	curEmptySlot=curC;
 	return curJ;
-}
-void Bonsai::startNewBlock(unsigned int vVal,unsigned int cVal){
+} // end findSpace
+
+/* 
+ * starts a new block/group of collisions
+*/
+void Bonsai::startNewBlock(unsigned int vVal,unsigned int cVal)
+{
 	unsigned int tmpSlot;
 	unsigned int curC;
 	//increase c loc
@@ -223,6 +231,10 @@ void Bonsai::startNewBlock(unsigned int vVal,unsigned int cVal){
 		if ( curEmptySlot==0 ) curEmptySlot=M-1;
 		else curEmptySlot--;
 }
+/*
+ * returns the locations of the associated change bit
+ * or noValue if not found.
+*/
 unsigned int Bonsai::getAssociatedC(unsigned int curAddress)
 {
 	//count ones in V and C
@@ -264,29 +276,29 @@ unsigned int Bonsai::getAssociatedC(unsigned int curAddress)
 	else return --curAddress;
 }
 
-
-bool Bonsai::itemExists(unsigned int cVal,
-			unsigned int quotient, unsigned int initAd){
-
+/*
+ * return if th item exists
+*/
+bool Bonsai::itemExists(unsigned int cVal, unsigned int quotient)
+{
 	if (hashTable[cVal]==quotient)
 		return true;
 	else
 		return false;
 }
 
-unsigned int Bonsai::findItem(unsigned int vVal,unsigned int cVal,
-			unsigned int quotient, unsigned int initAd){
+unsigned int Bonsai::findItem(unsigned int vVal,unsigned int cVal, unsigned int quotient){
 	unsigned int JVal=0;
 	unsigned int curC;
 	//check if the value is already inserted
-	bool itExists= itemExists(cVal, quotient, initAd);
+	bool itExists= itemExists(cVal, quotient);
 	if (itExists) return 0;
 
 	if (cVal==M-1) curC=0;
 	else curC=cVal+1;
 	//go upwards towards the end of the block 
 	while (C[curC] == 0){
-		itExists= itemExists(curC, quotient, initAd);
+		itExists= itemExists(curC, quotient);
 		if (itExists){
 			return ++JVal;
 		}
@@ -295,30 +307,33 @@ unsigned int Bonsai::findItem(unsigned int vVal,unsigned int cVal,
 		JVal++;	
 	}
 	return noValue;
-}
+}// end findItem
 
-
-unsigned int Bonsai::search (vector <unsigned int> t){
-	//initialize variables
-	unsigned long long prevInitAd=rootAddress;
-	unsigned int prevJ= rootLambda;
-	unsigned int associatedC;
-	origHash *key = new origHash();
-	for(unsigned int i=0;i<t.size();i++){
-		key->getKey(prevInitAd, (unsigned long long)t[i], prevJ,M,prime,a);
-		if (V[key->initAd]==0){
-			//cout<<"Item does not exist"<<endl;
-			return noValue;
-		}else{
-			associatedC=getAssociatedC(key->initAd);
-			prevJ=findItem(key->initAd,associatedC, key->quotient,key->initAd);
-		}
-		if (prevJ==noValue) return noValue;
-		else prevInitAd= key->initAd;
+/* Search phase
+ * Used for searchBenchmarks
+ * Goes through a search file searching transactions by transactions.
+ * This bench is designed spesifically for successful search operations
+ * Outputs error if search is unsuccessful.
+*/
+void Bonsai::searchBench(char* file)
+{
+	ifstream infile;
+	infile.open(file);
+	vector <unsigned int> str;
+	string rawData;
+	while(getline(infile,rawData))
+	{
+		str=getVector(rawData);
+		//if(search(str)==noValue) cout<<"error"<<endl;;
+		search(str);
+		str.clear();	
 	}
-		return associatedC;
 }
+
 /*
+ * reads transaction by transaction
+ * to be searched
+*/
 vector<unsigned int> Bonsai::getVector(string s){
   char* cstr, *p;
   vector<unsigned int> items;
@@ -331,24 +346,29 @@ vector<unsigned int> Bonsai::getVector(string s){
   }
   delete[] cstr;
   return items;
+} // getVector
+
+/*
+ * searches Items if not found prints error
+*/ 
+unsigned int Bonsai::search (vector <unsigned int> t){
+	//initialize variables
+	unsigned long long prevInitAd=rootAddress;
+	unsigned int prevJ= rootLambda;
+	unsigned int associatedC;
+	origHash *key = new origHash();
+	for(unsigned int i=0;i<t.size();i++){
+		key->getKey(prevInitAd, (unsigned long long)t[i], prevJ,M,prime,a);
+		if (V[key->initAd]==0){
+			cout<<"We searched every corner of bonsai universe. Item is not found! :("<<endl;
+			return noValue;
+		}else{
+			associatedC=getAssociatedC(key->initAd);
+			prevJ=findItem(key->initAd,associatedC, key->quotient);
+		}
+		if (prevJ==noValue) return noValue;
+		else prevInitAd= key->initAd;
+	}
+		return associatedC;
 }
 
-void Bonsai::searchBench(char* file){
- 
-	searchItems=0;
-	searchTrans=0;
-	ifstream infile;
-	infile.open(file);
-	vector <unsigned int> str;
-	string rawData;
-	//cout<<"file2: "<<file<<endl;
-	while(getline(infile,rawData))
-	{
-		str=getVector(rawData);
-		//if(search(str)==noValue) cout<<"error"<<endl;;
-		searchItems+=str.size();
-		searchTrans++;
-		str.clear();	
-	}
-}
-*/

@@ -17,27 +17,15 @@ mBonsaiGm::mBonsaiGm(unsigned int nodeNumber, unsigned int sigma, double loadFac
 	prime=nextPrimeNumber(cmax);
 
 	//calcAandInv(prime+1);
-	a = 17000000000000000000/prime;// rand() % M+ M;//19;//
-	aInv = rand() % M+ M; //we need to find a way
+	a = ULONG_MAX/prime;
 	emptyLoc= sigma+2;
 	rootID = rand() % (sigma-1);
 
 	hashTable= int_vector <SLEN> (M,emptyLoc);
 	D=new blockedDArray(blockSize,numBlocks);
 
-	//D=int_vector <DARRAYSIZE>(M,0);
 	randRootAdrs= (long) (rand() % M); //17;//
 	hashTable[randRootAdrs]=rootID;
-
-	//print info
-	cout<<"expected NodeNumber: "<<nodeNumber<<endl; //done
-	cout<<"M: "<<M<<"  lf: "<<loadFactor<<endl;
-	cout<<"cmax: "<<cmax<<endl;
-	cout<<"prime: "<<prime<<endl;
-	cout<<"a: "<<a<<"   aInv:"<< aInv <<endl;
-	cout<< "emptyLoc: "<<emptyLoc<<endl;
-	cout<<"number of blocks: "<<numBlocks<<endl;
-	cout<<"blockSize: "<<blockSize<<endl;
 }
 
 /* Function that checks whether or not a given number is
@@ -89,57 +77,51 @@ unsigned long long mBonsaiGm::nextPrimeNumber(unsigned long long inputNumber){
 }//end nextPrimeNumber
 
 
-/* During the building of Bonsai
- * called in build Bonsai func
- * param: trans[] of items where trans[0] is parent of trans[1] and so on. 
- * it calculates the quotient value and mod hash location
- * it calles the setAddress with the required data to handle collision and correct node match
- */
 
-void mBonsaiGm::readDataset()
+/* uses Data to read next Transaction
+ * creates transaction object passes it to insertTrans(t)
+*/
+void mBonsaiGm::build()
 {
-	unsigned int tranCount=0;
-		cout<<"entered readDataset"<<endl;
 	while(Transaction *t = data->getNext()) {
 		insertTrans(t);
 		delete t;
 	}
-}
+}// end build
 
+/* During the build phase
+ * called in build 
+ * param: trans[] of items where trans[0] is parent of trans[1] and so on. 
+ * it calculates the quotient value and mod hash location
+ * it calles the setAddress with the required data to handle collision and correct node match
+ */
 void mBonsaiGm::insertTrans(Transaction *t)
 {
-
 	hashFunction *key = new hashFunction();
 	unsigned long long prevInitAd=randRootAdrs;
-
 	for(int i=0; i<t->length;i++)
 	{
 		key->getKey(prevInitAd, t->t[i],M,prime,a);
-		prevInitAd=setAddress(key->initAd, key->quotient,t->t[i]);
-	
+		prevInitAd=setAddress(key->initAd, key->quotient);
 	}// end first for
 	delete key;
 }// end of manageDeltaTrie
 
 
-/* During the building of Bonsai
+/* During the build phase
  * called in insertTrans
  * it sets the quotient value in the correct mod hash location
  * it inserts the respective value in DArray
  * returns the hash loc so the next item (its child) can use it
  */
-unsigned long long mBonsaiGm::setAddress(unsigned long long initAd, unsigned int DIVM, unsigned int itemID){
-
-	//flag to stop the while
-	//bool flag=true;
+unsigned long long mBonsaiGm::setAddress(unsigned long long initAd, unsigned int DIVM)
+{
 	unsigned int DCount=0;
-	//if(initAd %2==0){
-	  while(true){
+	while(true){
 		//insert value in empty loc
 		if(hashTable[initAd]==emptyLoc){
 			hashTable[initAd]=DIVM;
 			nodeNumberCount++;
-			//if(DCount!=0) D[initAd]=DCount;
 			if(DCount!=0) D->setT(initAd,DCount);
 			return initAd;
 		}
@@ -161,25 +143,16 @@ unsigned long long mBonsaiGm::setAddress(unsigned long long initAd, unsigned int
 			initAd++;
 			if (initAd>=M)	initAd=0;
 		}
-	  }
+	}
 	
 }//end setAddress
 
-
-vector<unsigned int> mBonsaiGm::getVector(string s){
-  char* cstr, *p;
-  vector<unsigned int> items;
-  cstr= new char[s.size()+1];
-  strcpy(cstr, s.c_str());
-  p=strtok(cstr," ");
-  while(p!=NULL){
-    items.push_back(atoi(p));
-    p=strtok(NULL," ");
-  }
-  delete[] cstr;
-  return items;
-}
-
+/* Search phase
+ * Used for searchBenchmarks
+ * Goes through a search file searching transactions by transactions.
+ * This bench is designed spesifically for successful search operations
+ * Outputs error if search is unsuccessful.
+*/
 void mBonsaiGm::searchBench(char* file)
 { 
 	ifstream infile;
@@ -192,40 +165,59 @@ void mBonsaiGm::searchBench(char* file)
 		str=getVector(rawData);
 		hashFunction *key = new hashFunction();
 		unsigned long long prevInitAd=randRootAdrs;
-		
 		for(int i=0; i<str.size();++i)
 		{		
 			key->getKey(prevInitAd, (unsigned long long)str[i],M,prime,a);
-			prevInitAd=searchItem(key->initAd, key->quotient,str[i]);
-		}// end for
+			prevInitAd=searchItem(key->initAd, key->quotient);
+		}
 		delete key;
 		str.clear();	
 	}	
 }//end searchBench
 
+/*
+ * reads transaction by transaction
+ * to be searched
+*/
+vector<unsigned int> mBonsaiGm::getVector(string s)
+{
+	char* cstr, *p;
+	vector<unsigned int> items;
+	cstr= new char[s.size()+1];
+	strcpy(cstr, s.c_str());
+	p=strtok(cstr," ");
+	while( p != NULL ){
+		items.push_back(atoi(p));
+		p=strtok( NULL," ") ;
+	}
+	delete[] cstr;
+	return items;
+}// end getVector
 
-
-unsigned long long mBonsaiGm::searchItem(unsigned long long initAd, unsigned int DIVM, unsigned int itemID){
-
+/*
+ * searches Items if not found prints error
+*/ 
+unsigned long long mBonsaiGm::searchItem(unsigned long long initAd, unsigned int DIVM)
+{
 	unsigned int DCount=0;
 	  while(true){
 		//insert value in empty loc
-		if(hashTable[initAd]==emptyLoc){
-			cout<<"errorrr"<<endl;
+		if(hashTable[initAd]==emptyLoc)
+		{
+			cout<<"We searched every corner of mB universe. Item is not found! :("<<endl;
        			return nodeNotFound;
 		}
 		else if ( (hashTable[initAd]==DIVM) && (initAd!=randRootAdrs)  )
 		{
 			// item found don't set DArray
-			if (DCount==D->get(initAd)){
-			   //(DCount==D[initAd]){
+			if (DCount==D->get(initAd))
+			{
 				return initAd;
 			}else{
 				DCount++;
 				initAd++;
 				if (initAd>=M)	initAd=0;
-			}
-				
+			}		
 		}
 		else
 		{
@@ -235,4 +227,3 @@ unsigned long long mBonsaiGm::searchItem(unsigned long long initAd, unsigned int
 		}
 	  }
 }//end setAddress
-

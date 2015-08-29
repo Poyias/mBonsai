@@ -74,18 +74,12 @@ unsigned long long mBonsai::nextPrimeNumber(unsigned long long inputNumber){
 */
 void mBonsai::build()
 {
-	int xTrans=0;
-	int xItems=0;
-	//build phase
 	while(Transaction *t = data->getNext()) 
 	{
 		insert(t);
-		xItems += t->length;
 		delete t;
-		xTrans++;
 	}
 	delete data;
-	cout<<"xTrans: "<<xTrans<<" xItems: "<< xItems<<endl;
 }
 /* 
  * called in build()
@@ -115,87 +109,78 @@ void mBonsai::insert(Transaction *t)
  */
 unsigned long long mBonsai::setAddress(unsigned long long initAd, unsigned int DIVM){
 
-  unsigned int DCount=0;
-  //unsigned int tmpSat;
-while(true){
-
-//EMPTY LOC soo insert
-if(hashTable[initAd]==emptyLoc && (initAd!=randRootAdrs)){
-	singlepath=true;
-	hashTable[initAd]=DIVM;
-	//if (itemID==5) origNodeCount++;
-	++nodeNumberCount;
-	if(DCount!=0){
-		if(DCount<7){
-			D->D[initAd]=DCount;
-		}else if(DCount>=7 && DCount<=134){
-			D->D[initAd]=7;
-			sl->insert(initAd,DCount);
-		}else if(DCount>134){
-		        D->D[initAd]=7;
-			mapSl.insert ( std::pair <unsigned int, unsigned int> (initAd,DCount) );
-		}
-	}
-	return initAd;
-// check if it already exists 
- }else if ( (hashTable[initAd]==DIVM) && (singlepath==false) && (initAd!=randRootAdrs) ){	
-	//option for main
-	if(DCount<7 || D->D[initAd]<7){
-		if (DCount==D->D[initAd]){
-		 	return initAd;
+	unsigned int DCount=0;
+	while(true)
+	{
+		//EMPTY LOC soo insert
+		if(hashTable[initAd]==emptyLoc && (initAd!=randRootAdrs)){
+			singlepath=true;
+			hashTable[initAd]=DIVM;
+			//if (itemID==5) origNodeCount++;
+			++nodeNumberCount;
+			if(DCount!=0){
+				if(DCount<7){
+					D->D[initAd]=DCount;
+				}else if(DCount>=7 && DCount<=134){
+					D->D[initAd]=7;
+					sl->insert(initAd,DCount);
+				}else if(DCount>134){
+					D->D[initAd]=7;
+					mapSl.insert ( std::pair <unsigned int, unsigned int> (initAd,DCount) );
+				}
+			}
+			return initAd;
+		 // check if it already exists 
+		 }else if ( (hashTable[initAd]==DIVM) && (singlepath==false) && (initAd!=randRootAdrs) ){	
+			//option for main
+			if(DCount<7 || D->D[initAd]<7){
+				if (DCount==D->D[initAd]){
+				 	return initAd;
+				}else{
+					++DCount;
+					++initAd;
+					if (initAd>=M) initAd=0;
+				}  
+			//sublayer
+			}else if (D->D[initAd]==7 && DCount>=7 && DCount<=134){
+				unsigned int tmpSat = sl->find (initAd);
+			     	if (tmpSat==135){ 
+					++DCount;
+					++initAd;
+					if(initAd>=M) initAd=0;
+				}else if ((tmpSat+7)==DCount){
+				 	return initAd;
+				}else{
+					++DCount;
+					++initAd;
+					if(initAd>=M) initAd=0;
+				}
+			// final c++ hash map
+			}else if (D->D[initAd]==7 && DCount>134){
+				if(mapSl.find(initAd)==mapSl.end() || mapSl.find(initAd)->second!=DCount){ 
+					++DCount;
+					++initAd;
+					if(initAd>=M) initAd=0;
+				}else{
+					return initAd;//mapSl.find(initAd)->second;
+				}
+			}
+		// NOT EMPTY_LOC and NOT SAME_DIV.. MOVE_ON then
 		}else{
 			++DCount;
 			++initAd;
-			if (initAd>=M) initAd=0;
-		}  
-	//sublayer
-	}else if (D->D[initAd]==7 && DCount>=7 && DCount<=134){
-		unsigned int tmpSat = sl->find (initAd);
-	     	if (tmpSat==135){ 
-			++DCount;
-			++initAd;
-			if(initAd>=M) initAd=0;
-		}else if ((tmpSat+7)==DCount){
-		 	return initAd;
-		}else{
-			++DCount;
-			++initAd;
-			if(initAd>=M) initAd=0;
+			if(initAd>=M)	initAd=0;
 		}
-	// final c++ hash map
-	}else if (D->D[initAd]==7 && DCount>134){
-	    if(mapSl.find(initAd)==mapSl.end() || mapSl.find(initAd)->second!=DCount){ 
-			++DCount;
-			++initAd;
-			if(initAd>=M) initAd=0;
-		}else{
-			return initAd;//mapSl.find(initAd)->second;
-		}
-	}
-// NOT EMPTY_LOC NOT SAME_DIV
-}else{
-	++DCount;
-	++initAd;
-	if(initAd>=M)	initAd=0;
-}
-}//end while
+	}//end while
 
 }//end setAddress
 
-vector<unsigned int> mBonsai::getVector(string s){
-  char* cstr, *p;
-  vector<unsigned int> items;
-  cstr= new char[s.size()+1];
-  strcpy(cstr, s.c_str());
-  p=strtok(cstr," ");
-  while(p!=NULL){
-    items.push_back(atoi(p));
-    p=strtok(NULL," ");
-  }
-  delete[] cstr;
-  return items;
-}
-
+/* Search phase
+ * Used for searchBenchmarks
+ * Goes through a search file searching transactions by transactions.
+ * This bench is designed spesifically for successful search operations
+ * Outputs error if search is unsuccessful.
+*/
 void mBonsai::searchBench(char* file)
 { 
 	ifstream infile;
@@ -214,36 +199,52 @@ void mBonsai::searchBench(char* file)
 		
 			key->getKey(prevInitAd, (unsigned long long)str[i],M,prime,a);
 			prevInitAd=searchItem(key->initAd, key->quotient,str[i]);
-				//cout<<"Errooor"<<endl;
-		}// end for
+		}
 		delete key;
 		str.clear();	
 	}	
 }//end searchBench
 
-/* During the search Benchmarking of Bonsai
- * searches for succesful search operation
- */
+/*
+ * reads transaction by transaction
+ * to be searched
+*/
+vector<unsigned int> mBonsai::getVector(string s){
+  char* cstr, *p;
+  vector<unsigned int> items;
+  cstr= new char[s.size()+1];
+  strcpy(cstr, s.c_str());
+  p=strtok(cstr," ");
+  while(p!=NULL){
+    items.push_back(atoi(p));
+    p=strtok(NULL," ");
+  }
+  delete[] cstr;
+  return items;
+} // end getVector
+
+/*
+ * searches Items if not found prints error
+*/ 
 unsigned long long mBonsai::searchItem(unsigned long long initAd, unsigned int DIVM, unsigned int itemID)
 {
 	unsigned int DCount=0;
-	//unsigned int tmpSat;
 	while(true){
 		//EMPTY LOC so item not Found
 		if(hashTable[initAd]==emptyLoc && (initAd!=randRootAdrs)){
-		      cout<<"error"<<endl;
-	  	      return valNotFound;
+			cout<<"We searched every corner of mame-Bonsai universe. Item is not found! :("<<endl;
+	  		return valNotFound;
 		// check if it alreadey exists 
 		}else if((hashTable[initAd]==DIVM)&&(initAd!=randRootAdrs)){	
 		//option for main
 		if(DCount<7 || D->D[initAd]<7){
 			if (DCount==D->D[initAd]){
-			 	return initAd;
+				return initAd;
 			}else{
 				++DCount;
 				++initAd;
 				if (initAd>=M) initAd=0;
-			}  
+			}
 		// option for sublayer
 		}else if (D->D[initAd]==7 && DCount>=7 && DCount<=134){
 			unsigned int tmpSat = sl->find (initAd);
@@ -252,7 +253,7 @@ unsigned long long mBonsai::searchItem(unsigned long long initAd, unsigned int D
 				++initAd;
 				if(initAd>=M) initAd=0;
 			}else if ((tmpSat+7)==DCount){
-			 	return initAd;
+				return initAd;
 			}else{
 				++DCount;
 				++initAd;
@@ -269,8 +270,6 @@ unsigned long long mBonsai::searchItem(unsigned long long initAd, unsigned int D
 			}
 		}
 		// NOT EMPTY_LOC NOT SAME_DIV move to next one
-		//}else if(DCount>M){
-	  	//	return valNotFound;
 		}else{
 			++DCount;
 			++initAd;

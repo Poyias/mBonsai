@@ -1,33 +1,42 @@
 #include "sdsl/int_vector.hpp"
 #include "../readio/data.h"
 #include "../DArray/mBonsai_gamma/blockedDArray.h"
+#include "limits.h"
+
 using namespace sdsl;
 
 class mBonsaiGm {
 
 public:
-mBonsaiGm(){}
 
-mBonsaiGm(unsigned int nodeNumber, unsigned int sigma, double loadFactor,char* file,unsigned int blockSize, unsigned int numBlocks);
-void setData(char *file){data = new Data(file);}
-void readDataset();
-bool isPrime(unsigned long long input);
-unsigned long long nextPrimeNumber(unsigned long long inputNumber);
-void insertTrans(Transaction *t);
-unsigned long long setAddress(unsigned long long initAd, unsigned int DIVM, unsigned int itemID);
-unsigned long long searchItem(unsigned long long initAd, unsigned int DIVM, unsigned int itemID);
-void searchBench(char * file);
-vector <unsigned int> getVector(string s);
-
+//structure
 int_vector<SLEN> hashTable;
 blockedDArray *D;
-Data* data ;
 
+//init
+mBonsaiGm(){}
+mBonsaiGm(unsigned int nodeNumber, unsigned int sigma, double loadFactor,char* file,unsigned int blockSize, unsigned int numBlocks);
+void setData(char *file){data = new Data(file);}
+
+//build
+void build();
+void insertTrans(Transaction *t);
+unsigned long long setAddress(unsigned long long initAd, unsigned int DIVM);
+
+//search benchmarks
+void searchBench(char * file);
+vector <unsigned int> getVector(string s); // readio
+unsigned long long searchItem(unsigned long long initAd, unsigned int DIVM);
+
+//misc
+bool isPrime(unsigned long long input);
+unsigned long long nextPrimeNumber(unsigned long long inputNumber);
+
+// args for printing and counting
 unsigned long long sigma;
 unsigned long long M;
 unsigned int nodeNumberCount;
- unsigned int searchItems;
- unsigned int searchTrans;
+
 
 private:
 
@@ -38,7 +47,5 @@ unsigned long long a;
 unsigned long long aInv;
 unsigned int randRootAdrs;
 unsigned int emptyLoc;
-//unsigned int searchItems;
-//unsigned int  searchTrans;
-
+Data* data ; //readio
 };

@@ -9,31 +9,36 @@ using namespace std;
 class Bonsai {
 
 public:
-Bonsai(){}
-Bonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor, char* file);
-void setData(char *file){data = new Data(file);}
-void readDataset();
-
-unsigned int insert (Transaction *t,unsigned int line);
-unsigned int getAssociatedC(unsigned int curAddress);
-unsigned int findSpace(unsigned int cVal, unsigned int quotient, unsigned int initAd);
-bool itemExists(unsigned int cVal,unsigned int quotient, unsigned int initAd);
-unsigned int findItem(unsigned int vVal,unsigned int cVal,
-		unsigned int quotient, unsigned int initAd);
-void startNewBlock(unsigned int vVal,unsigned int cVal);
-
-bool isPrime(unsigned long long input);
-unsigned long long nextPrimeNumber(unsigned long long inputNumber);
-vector <unsigned int> getVector(string s);
-
-unsigned int search (vector<unsigned int> t);
-void searchBench(char* file);
-Data* data ;
-
+//structure
 int_vector<SLEN> hashTable;
 bit_vector V;
 bit_vector C;
 
+//init
+Bonsai(){}
+Bonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor, char* file);
+void setData(char *file){data = new Data(file);}
+
+//build phase
+void build();
+unsigned int insert (Transaction *t,unsigned int line);
+//navigations collision handling
+unsigned int getAssociatedC(unsigned int curAddress);
+unsigned int findSpace(unsigned int cVal, unsigned int quotient, unsigned int initAd);
+bool itemExists(unsigned int cVal,unsigned int quotient);
+void startNewBlock(unsigned int vVal,unsigned int cVal);
+unsigned int findItem(unsigned int vVal,unsigned int cVal, unsigned int quotient);
+
+//misc
+bool isPrime(unsigned long long input);
+unsigned long long nextPrimeNumber(unsigned long long inputNumber);
+
+//search phase
+void searchBench(char* file);
+vector <unsigned int> getVector(string s);
+unsigned int search (vector<unsigned int> t);
+
+//args for printing and counting
 unsigned long long sigma;
 unsigned long long M;
 unsigned int nodeNumberCount;
@@ -51,6 +56,5 @@ unsigned int a;
 unsigned int rootAddress;
 unsigned int emptySymbol;
 unsigned int curEmptySlot;
-unsigned int searchItems;
-unsigned int searchTrans;
+Data* data; //readio
 };

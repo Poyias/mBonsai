@@ -7,6 +7,7 @@
 // 3 dataset
 // 4 loadFactor
 // 5 blockSize
+// 6 searchFile
 
 int main(int argc, char *argv[])
 {
@@ -16,10 +17,11 @@ int main(int argc, char *argv[])
 	double loadFactor = atof(argv[4]);
 	unsigned int blockSize = atoi(argv[5]);
 	unsigned int numBlocks = ceil((double) ( ((double)nodeNum/loadFactor)/(double)blockSize) );
-	mBonsaiGm *b =  new mBonsaiGm(nodeNum, sigma, loadFactor, file, blockSize, numBlocks);
-	b->readDataset();
-	cout << b->nodeNumberCount<<endl;
-	b-> searchBench(argv[6]);
+
+	mBonsaiGm *mbGm =  new mBonsaiGm(nodeNum, sigma, loadFactor, file, blockSize, numBlocks);
+	mbGm->build();
+	cout << mbGm->nodeNumberCount<<endl;
+	mbGm-> searchBench(argv[6]);
 
 return 0;
 }
