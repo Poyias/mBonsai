@@ -10,7 +10,6 @@ SubLayer::SubLayer(double perOfM,unsigned long long M,unsigned int difference)
 	valNotFound = Msl+10;
 	cmax= M-1;
 	prime=nextPrimeNumber(cmax);
-
 	a=ULONG_MAX/prime;
 	unsigned long long minA=a-Msl;
 	a=a-minA+1;
@@ -105,7 +104,7 @@ unsigned int SubLayer::getSatelite(unsigned int vVal,unsigned int cVal,
 	unsigned int curC;
 	unsigned int tmpSlot;
 	//check if the value is already inserted
-	if ((itemExists(vVal,cVal, quotient))){
+	if ((itemExists(cVal, quotient))){
 		curEmptySlot=cVal;
 		return cVal; 
 	}else if(hashTable[cVal]==emptyLoc){
@@ -119,7 +118,7 @@ unsigned int SubLayer::getSatelite(unsigned int vVal,unsigned int cVal,
 	//go upwards towards the end of the block	
 	while (C[curC] == 0)
 	{	
-		if (itemExists(vVal,curC, quotient)){
+		if (itemExists(curC, quotient)){
 			curEmptySlot=curC;
 			return curC;
 		}
@@ -143,12 +142,11 @@ void SubLayer::insert (unsigned long long key, unsigned int value)
 	{
 		hashTable[initAd]=quotient;
 		V[initAd]=1;
-		C[initAd]=1; //prob not needed
+		C[initAd]=1;
 		satData[initAd]=value-dif;
 	}
 	else
 	{
-		//start of block
 		unsigned long long changeBit=getChangeBitLoc(initAd);
 		if(V[initAd]==0){
 			if (changeBit!=valNotFound)
@@ -178,7 +176,7 @@ void SubLayer::findSpace(unsigned long long vVal,unsigned long long cVal,
 	bool itExists=false;
 	unsigned int tmpSlot;
 
-	if ( (itemExists(vVal,cVal, quotient)) || (hashTable[cVal]==emptyLoc)){
+	if ( (itemExists(cVal, quotient)) || (hashTable[cVal]==emptyLoc)){
 		curEmptySlot=cVal;
 		return; 
 	}
@@ -189,7 +187,7 @@ void SubLayer::findSpace(unsigned long long vVal,unsigned long long cVal,
 	//go upwards towards the end of the block	
 	while (C[curC] == 0)
 	{	
-		if (itemExists(vVal,cVal, quotient)){
+		if (itemExists(cVal, quotient)){
 			curEmptySlot=curC;
 			return;
 		}
@@ -281,9 +279,8 @@ unsigned long long SubLayer::getChangeBitLoc(unsigned long long curAddress)
 }
 
 
-bool SubLayer::itemExists(unsigned long long vVal,unsigned long long cVal,
-			unsigned long long quotient){
-
+bool SubLayer::itemExists(unsigned long long cVal, unsigned long long quotient)
+{
 	if (hashTable[cVal]==quotient)
 		return true;
 	return false;
