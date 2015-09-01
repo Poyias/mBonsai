@@ -18,9 +18,6 @@ int main(int argc, char *argv[])
 	b->build();
 	cout<<"node Count: "<<b->nodeNumberCount<<endl;
 	b->searchBench(argv[5]);
-
-
-
 return 0;
 }
 
