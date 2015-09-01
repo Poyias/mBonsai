@@ -27,7 +27,7 @@ To be able to compile the m-Bonsai libraries.
 
 
 ###dataset
-It is a fastq format dataset.
-
+It is a fastq format dataset where we selected the second line of each sequence.
+We transformed each chararacter from {A,G,C,T,N} to {0,1,2,3,4}.
 
 
