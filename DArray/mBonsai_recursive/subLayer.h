@@ -22,11 +22,10 @@ unsigned long long nextPrimeNumber(unsigned long long inputNumber);
 //build phase
 void insert (unsigned long long key, unsigned int value);
 unsigned long long getChangeBitLoc(unsigned long long curAddress);
-void findSpace(unsigned long long vVal,unsigned long long cVal,unsigned long long quotient);
+void findSpace(unsigned long long cVal,unsigned long long quotient);
 unsigned long long find(unsigned long long key);
 void startNewBlock(unsigned int vVal,unsigned int cVal);
 bool itemExists(unsigned long long cVal,unsigned long long quotient);
-
 //fetch displacement value stored as satelite data
 unsigned int getSatelite(unsigned int vVal, unsigned int cVal, unsigned int quotients);
 unsigned int nodeNumberCount;
@@ -40,7 +39,7 @@ unsigned long long Msl;
 unsigned long long prime;
 unsigned long long a;
 unsigned long long aInv;
-unsigned int emptyLoc;
-unsigned int curEmptySlot;
+unsigned long long emptyLoc;
+unsigned long long curEmptySlot;
 
 };

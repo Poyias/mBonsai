@@ -42,12 +42,12 @@ unsigned int origNodeCount;
 
 private:
 bool singlepath;
-unsigned int rootID;
+unsigned long long rootID;
 unsigned long long prime;
 unsigned long long a;
 unsigned long long valNotFound;
-unsigned int randRootAdrs;
-unsigned int emptyLoc;
+unsigned long long randRootAdrs;
+unsigned long long emptyLoc;
 Data* data; // readio
 };
 

@@ -17,7 +17,7 @@ mBonsaiGm::mBonsaiGm(unsigned int nodeNumber, unsigned int sigma, double loadFac
 	prime=nextPrimeNumber(cmax);
 
 	//calcAandInv(prime+1);
-	a = ULONG_MAX/prime;
+	a = (ULONG_MAX-M)/prime;
 	emptyLoc= sigma+2;
 	rootID = rand() % (sigma-1);
 

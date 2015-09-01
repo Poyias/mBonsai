@@ -2,6 +2,7 @@
 #include <sdsl/bit_vectors.hpp>
 #include "../readio/data.h"
 #include "../Hash/orighashFunc.h"
+#include "limits.h"
 
 using namespace sdsl;
 using namespace std;
@@ -24,7 +25,7 @@ void build();
 unsigned int insert (Transaction *t,unsigned int line);
 //navigations collision handling
 unsigned int getAssociatedC(unsigned int curAddress);
-unsigned int findSpace(unsigned int cVal, unsigned int quotient, unsigned int initAd);
+unsigned int findSpace(unsigned int cVal, unsigned int quotient);
 bool itemExists(unsigned int cVal,unsigned int quotient);
 void startNewBlock(unsigned int vVal,unsigned int cVal);
 unsigned int findItem(unsigned int vVal,unsigned int cVal, unsigned int quotient);

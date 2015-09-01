@@ -2,8 +2,8 @@
 
 Bonsai::Bonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,char* file)
 {
-  	srand(getpid()+time(NULL));
-	this->sigma=sigma;
+  	srand(time(NULL));
+	this->sigma=++sigma;
 	M= ((nodeNumber*1)/(loadFactor));
 	setData(file);
 	noValue = M+10;
@@ -12,7 +12,7 @@ Bonsai::Bonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,ch
 	lambda=32;
 	cmax= ( ( (lambda*(sigma-1))+lambda-1 ) *M )+(M-1);
 	prime=nextPrimeNumber(cmax);
-	a = rand() % M + M; 
+	a = ULONG_MAX/prime;
 	emptySymbol= lambda*sigma+2;
 	rootID = (unsigned int) lambda*sigma+1;
 	rootLambda=0;
@@ -31,10 +31,7 @@ Bonsai::Bonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,ch
 bool Bonsai::isPrime(unsigned long long input){
 	int i;
 	bool prime = true;
-
-	if(input == 2){
-		return true;
-	}
+	if(input == 2)  return true;
 
 	if(input%2 == 0 || input <= 1){
 		prime = false;
@@ -125,7 +122,7 @@ unsigned int Bonsai::insert (Transaction *t,unsigned int line)
 		hashTable[curEmptySlot]=key->quotient;
 		prevInitAd= key->initAd;
 	      }else{// block already exists
-		prevJ=findSpace(associatedC, key->quotient,key->initAd);
+		prevJ=findSpace(associatedC, key->quotient);
 		
 		if(prevJ<lambda){//if item doesn't exist
 		  if (t->t[i]==5) origNodeCount++;
@@ -149,18 +146,15 @@ unsigned int Bonsai::insert (Transaction *t,unsigned int line)
  * returns curJ if item does not exist
 */
 
-unsigned int Bonsai::findSpace(unsigned int cVal,
-			unsigned int quotient, unsigned int initAd)
+unsigned int Bonsai::findSpace(unsigned int cVal, unsigned int quotient)
 {
 	//we have curEmptySlot & assoC
 	unsigned int curJ=0;
 	unsigned int curC;
 	//check if the value is already inserted
-	bool itExists=false;
 	unsigned int tmpSlot;
-	itExists= itemExists(cVal, quotient);
 	//j is 0
-	if (itExists){
+	if (itemExists(cVal, quotient)){
 		curEmptySlot=cVal;
 		return lambda; // 0+lambda
 	}else if(hashTable[cVal]==emptySymbol){
@@ -175,8 +169,7 @@ unsigned int Bonsai::findSpace(unsigned int cVal,
 	//go upwards towards the end of the block
 	while (C[curC] == 0)
 	{	
-		itExists= itemExists(curC, quotient);
-		if (itExists){
+		if (itemExists(curC, quotient)){
 			curEmptySlot=curC;
 			return lambda+curJ;
 		}

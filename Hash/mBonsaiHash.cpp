@@ -8,7 +8,8 @@ hashFunction hashFunction::getKey(unsigned long long parentLoc, unsigned long lo
 {
 	hashFunction key;
 	unsigned long long c= (itemID * M)+parentLoc;
-	unsigned long long cRand= ((c %prime)*a)%prime;
+	unsigned long long cRand= ((c %prime)*a);
+	cRand = cRand % prime;
 	initAd= cRand % M;
 	quotient= cRand/M;
 	return key;

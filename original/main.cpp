@@ -16,8 +16,9 @@ int main(int argc, char *argv[])
 
 	Bonsai *b =  new Bonsai(nodeNum, sigma, loadFactor, file);
 	b->build();
-	b->searchBench(argv[5]);
 	cout<<"node Count: "<<b->nodeNumberCount<<endl;
+	b->searchBench(argv[5]);
+
 
 
 return 0;

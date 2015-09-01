@@ -10,7 +10,8 @@ unsigned long long keyJ,unsigned long long M,unsigned long long prime, unsigned 
 {
 	origHash key;
 	unsigned long long c= (itemID*(unsigned long long)32+keyJ)*M+parentLoc;
-	unsigned long long cRand= ((c %prime)*a)%prime;
+	unsigned long long cRand= ((c %prime)*a);
+	cRand = cRand % prime;
 	initAd= cRand % M;
 	quotient= cRand/M; //it includes the parents J
 	return key;

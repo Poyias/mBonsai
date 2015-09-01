@@ -18,8 +18,9 @@ int main(int argc, char *argv[])
 
 	mBonsai *mbr =  new mBonsai(nodeNum, sigma, loadFactor, file);
 	mbr->build(); // build
-	mbr->searchBench(searchFile); //search benchmark
 	cout<<"nodeNumberCount: "<<mbr->nodeNumberCount<<endl;
+	mbr->searchBench(searchFile); //search benchmark
+
 
 return 0;
 }

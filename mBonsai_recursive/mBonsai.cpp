@@ -14,16 +14,13 @@ mBonsai::mBonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,
 	origNodeCount=1; // in case of split nums
 	unsigned long long cmax=sigma*M+(M-1);
 	prime=nextPrimeNumber(cmax);
-	//random a
-	a=ULONG_MAX/prime;
-	unsigned long long minA=a-M;
-	a = (rand() % (a-minA+1))+minA;
+	a = ULONG_MAX/2*(M+prime);
 	emptyLoc= sigma+2;
-	rootID = rand() % (sigma-1);
+	rootID = 3;//rand() % (sigma-1);
 	hashTable= int_vector <SLEN> (M,emptyLoc);
 	D=new DArray(M);
 	sl= new SubLayer(0.062303, M, 7);	
-	randRootAdrs=(long) (rand() % M); 
+	randRootAdrs=10000;//(long) (rand() % M); 
 	hashTable[randRootAdrs]=rootID;	
 }
 
@@ -196,7 +193,6 @@ void mBonsai::searchBench(char* file)
 		
 		for(int i=0; i<str.size();++i)
 		{
-		
 			key->getKey(prevInitAd, (unsigned long long)str[i],M,prime,a);
 			prevInitAd=searchItem(key->initAd, key->quotient,str[i]);
 		}
@@ -231,8 +227,8 @@ unsigned long long mBonsai::searchItem(unsigned long long initAd, unsigned int D
 	unsigned int DCount=0;
 	while(true){
 		//EMPTY LOC so item not Found
-		if(hashTable[initAd]==emptyLoc && (initAd!=randRootAdrs)){
-			cout<<"We searched every corner of mame-Bonsai universe. Item is not found! :("<<endl;
+		if(hashTable[initAd]==emptyLoc){
+			//cout<<"We searched every corner of mame-Bonsai universe. Item is not found! :("<<endl;
 	  		return valNotFound;
 		// check if it alreadey exists 
 		}else if((hashTable[initAd]==DIVM)&&(initAd!=randRootAdrs)){	
