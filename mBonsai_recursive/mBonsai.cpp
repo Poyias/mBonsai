@@ -14,13 +14,13 @@ mBonsai::mBonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,
 	origNodeCount=1; // in case of split nums
 	unsigned long long cmax=sigma*M+(M-1);
 	prime=nextPrimeNumber(cmax);
-	a = ULONG_MAX/2*(M+prime);
+	a = ULONG_MAX/prime;
 	emptyLoc= sigma+2;
-	rootID = 3;//rand() % (sigma-1);
+	rootID = rand() % (sigma-1);
 	hashTable= int_vector <SLEN> (M,emptyLoc);
 	D=new DArray(M);
 	sl= new SubLayer(0.062303, M, 7);	
-	randRootAdrs=10000;//(long) (rand() % M); 
+	randRootAdrs=(long) (rand() % M); 
 	hashTable[randRootAdrs]=rootID;	
 }
 
@@ -228,7 +228,7 @@ unsigned long long mBonsai::searchItem(unsigned long long initAd, unsigned int D
 	while(true){
 		//EMPTY LOC so item not Found
 		if(hashTable[initAd]==emptyLoc){
-			//cout<<"We searched every corner of mame-Bonsai universe. Item is not found! :("<<endl;
+			cout<<"We searched every corner of mame-Bonsai universe. Item is not found! :("<<endl;
 	  		return valNotFound;
 		// check if it alreadey exists 
 		}else if((hashTable[initAd]==DIVM)&&(initAd!=randRootAdrs)){	

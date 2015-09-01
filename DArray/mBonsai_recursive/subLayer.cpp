@@ -5,12 +5,16 @@ SubLayer::SubLayer(double perOfM,unsigned long long M,unsigned int difference)
 {
 	srand(time(NULL));
 	dif=difference;
-	Msl =1.25* (((double)M*perOfM)+1.0);
+	Msl =1.2* (((double)M*perOfM)+1.0);
 	nodeNumberCount=0;
 	valNotFound = Msl+10;
 	cmax= M-1;
 	prime=nextPrimeNumber(cmax);
 	a = ULONG_MAX/prime;
+	/*unsigned long long minA=a-Msl;
+	a=a-minA+1;
+	a = rand() % a;
+	a+=minA;*/
 	emptyLoc= (cmax/Msl)+2;
 	hashTable= int_vector <SLEN2> (Msl,emptyLoc);
 	satData = int_vector <SAT>(Msl,0);
@@ -78,7 +82,7 @@ unsigned long long SubLayer::find(unsigned long long key)
 
 	if (V[initAd]==0)
 	{
-std::cout<<"lolllla"<<std::endl;
+		//std::cout<<"lolllla"<<std::endl;
 		return 127+dif+1;
 	}
 	else
@@ -87,8 +91,7 @@ std::cout<<"lolllla"<<std::endl;
 		if(exists!=valNotFound){
 			return satData[curEmptySlot];
 		}
-std::cout<<"lalllla"<<std::endl;
-		return  135;//satData[exists];
+		return  135;//satData[exists];//135
 	}	
 }//end find
 
@@ -183,7 +186,7 @@ void SubLayer::findSpace(unsigned long long cVal, unsigned long long quotient)
 	//go upwards towards the end of the block	
 	while (C[curC] == 0)
 	{	
-		if (itemExists(curC, quotient)){
+		if (itemExists(cVal, quotient)){
 			curEmptySlot=curC;
 			return;
 		}
