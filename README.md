@@ -22,7 +22,6 @@ To be able to compile the m-Bonsai libraries.
 1. Install sdsl-lite.
    Follow the installation guide here:
    https://github.com/simongog/sdsl-lite
-2. edit .sh files change "username" to your username.
 3. run .sh file
 
 
