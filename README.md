@@ -2,6 +2,7 @@
 
 ##Description
 m-Bonsai is a compact representation of tries using hashtables.
+
 If you make use of any mame-Bonsai or Bonsai implementation for research or commercial purposes, the reference will be:
 
 A. Poyias and R. Raman. [Improved Practical Compact Tynamic Tries.](http://dblp.uni-trier.de/pers/hd/p/Poyias:Andreas) Proc. SPIRE 2015, pp. 324-336.
