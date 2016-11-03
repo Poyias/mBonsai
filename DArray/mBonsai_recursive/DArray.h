@@ -7,7 +7,7 @@ class DArray
 {
 public:
 
-int_vector<DARRAYSIZE> D;
+int_vector<3> D;
 DArray(){}
 DArray(unsigned long long size);
 

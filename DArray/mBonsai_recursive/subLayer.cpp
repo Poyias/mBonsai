@@ -16,8 +16,13 @@ SubLayer::SubLayer(double perOfM,unsigned long long M,unsigned int difference)
 	a = rand() % a;
 	a+=minA;*/
 	emptyLoc= (cmax/Msl)+2;
-	hashTable= int_vector <SLEN2> (Msl,emptyLoc);
-	satData = int_vector <SAT>(Msl,0);
+	// hashTable= int_vector <SLEN2> (Msl,emptyLoc);
+	hashTable = int_vector<0>(0);
+	hashTable.width((unsigned int)log2(emptyLoc)+1); // this should be +2???
+	hashTable.resize(Msl);
+	for(unsigned int i=0; i<Msl; i++) hashTable[i] = emptyLoc;
+
+	satData = int_vector <7>(Msl,0);
 	V = bit_vector(Msl,0);
 	C = bit_vector(Msl,1);
 }

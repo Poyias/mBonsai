@@ -2,7 +2,7 @@
 
 DArray::DArray(unsigned long long size)
 {	
-	D = int_vector <DARRAYSIZE> (size,0);
+	D = int_vector <3> (size,0);
 	this->size=size;
 }
 

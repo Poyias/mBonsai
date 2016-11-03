@@ -7,6 +7,8 @@
  * 4 loadFactor = 0.8
  * 5 searchFile
 */
+void printSpace(mBonsai*);
+
 int main(int argc, char *argv[])
 {
 	//arguments
@@ -20,8 +22,32 @@ int main(int argc, char *argv[])
 	mbr->build(); // build
 	cout<<"nodeNumberCount: "<<mbr->nodeNumberCount<<endl;
 	mbr->searchBench(searchFile); //search benchmark
-
+	printSpace(mbr);
 
 return 0;
 }
 
+
+void printSpace(mBonsai* mbr){
+cout << "space in bits (in detail): "<<"\tht: "  << size_in_bytes(mbr->hashTable)/(double)mbr->nodeNumberCount*8.0 << endl <<
+	"\t\tmain D layer: " 	<< size_in_bytes(mbr->D->D)/(double)mbr->nodeNumberCount*8.0 << endl <<
+	"\t\tD sublayer: " 	<< size_in_bytes(mbr->sl->hashTable)/(double)mbr->nodeNumberCount*8.0 << endl <<
+	"\t\tD subLayer (V+C): " << (size_in_bytes(mbr->sl->V)+size_in_bytes(mbr->sl->C))/(double)mbr->nodeNumberCount*8.0<< endl<<
+	"\t\tD sublayer satellite: " << 8.0*(size_in_bytes(mbr->sl->satData))/(double)mbr->nodeNumberCount<< endl <<
+	"\t\tmapsl : "	<< 48.0*8.0*mbr->mapSl.size()/(double)mbr->nodeNumberCount<<endl;
+
+	//average space per M
+	double avgSize = (  //size_in_bytes(mbr->hashTable)+ // Qarray
+						size_in_bytes(mbr->D->D) + //D_0
+						size_in_bytes(mbr->sl->hashTable) + //BonOr Qarray
+						size_in_bytes(mbr->sl->V) + //BonOr Virgin bit
+						size_in_bytes(mbr->sl->C) + //BonOr Change bit
+						size_in_bytes(mbr->sl->satData) +//BonOr sat Data
+						(mbr->mapSl.size()*48.0)
+					 )*8.0;
+	avgSize=avgSize/(double)mbr->nodeNumberCount;
+	cout<< "Space summary: "<<endl<<
+	"hashTable: "<<  size_in_bytes(mbr->hashTable)/(double)mbr->nodeNumberCount*8.0<< " bits \nTotal DArray size: "<<
+	avgSize<<" bits \nTotal: "<<  (size_in_bytes(mbr->hashTable)/(double)mbr->nodeNumberCount*8.0 ) + avgSize<<" bits\n"<<
+	"==========="<<endl;
+}

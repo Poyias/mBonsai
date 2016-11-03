@@ -10,7 +10,7 @@ class mBonsai {
 
 public:
 //structure
-int_vector<SLEN> hashTable;
+int_vector<0> hashTable;
 DArray *D; //displacement array 
 SubLayer *sl; //sublayer displacement array 
 map<unsigned int,unsigned int> mapSl; // overflown Displacement

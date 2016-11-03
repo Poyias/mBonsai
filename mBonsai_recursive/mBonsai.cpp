@@ -17,7 +17,11 @@ mBonsai::mBonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,
 	a = ULONG_MAX/prime;
 	emptyLoc= sigma+2;
 	rootID = rand() % (sigma-1);
-	hashTable= int_vector <SLEN> (M,emptyLoc);
+	// hashTable= int_vector <SLEN> (M,emptyLoc);
+	hashTable = int_vector <0> (0);
+	hashTable.width(log2(emptyLoc)+1);
+	hashTable.resize(M);
+	for(unsigned long long i=0; i<M; i++) hashTable[i] = emptyLoc;
 	D=new DArray(M);
 	sl= new SubLayer(0.062303, M, 7);	
 	randRootAdrs=(long) (rand() % M); 

@@ -1,15 +1,15 @@
 #include "sdsl/int_vector.hpp"
-
+#include <iostream>
 using namespace sdsl;
-
+using namespace std;
 class SubLayer {
 
 public:
 //structure
-int_vector<SLEN2> hashTable;
+int_vector<0> hashTable;
 bit_vector V;
 bit_vector C;
-int_vector<SAT> satData;
+int_vector<7> satData;
 
 //init
 SubLayer(){}
