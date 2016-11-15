@@ -1,3 +1,6 @@
+#ifndef REC_HASH
+#define REC_HASH
+
 class hashFunction
 {
  public:
@@ -16,4 +19,4 @@ unsigned int getQuotient(){return quotient;}
 unsigned int recoverID(unsigned long long initAd, unsigned int DIVM, unsigned long long M,unsigned long long prime, unsigned long long aInv);
 unsigned long long recoverParentLoc(unsigned long long initAd, unsigned int DIVM, unsigned long long M,unsigned long long prime, unsigned long long aInv);
 };
-
+#endif

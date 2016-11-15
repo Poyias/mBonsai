@@ -1,3 +1,5 @@
+#ifndef CLEARY_HASH
+#define CLEARY_HASH
 class origHash
 {
  public:
@@ -18,3 +20,4 @@ unsigned long long recoverJ(unsigned long long initAd, unsigned int DIVM, unsign
 
 
 };
+#endif

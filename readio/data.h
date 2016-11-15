@@ -1,3 +1,5 @@
+#ifndef DATA
+#define DATA
 #include <stdio.h>
 class Transaction
 {
@@ -22,3 +24,4 @@ private:
 	FILE *in;
 	int current;
 };
+#endif

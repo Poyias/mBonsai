@@ -2,6 +2,9 @@
 #include <iostream>
 using namespace sdsl;
 using namespace std;
+
+#ifndef SUBLAYER
+#define SUBLAYER 
 class SubLayer {
 
 public:
@@ -43,3 +46,4 @@ unsigned long long emptyLoc;
 unsigned long long curEmptySlot;
 
 };
+#endif

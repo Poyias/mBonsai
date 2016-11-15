@@ -2,7 +2,8 @@
 
 using namespace std;
 using namespace sdsl;
-
+#ifndef DARRAY
+#define DARRAY value
 class DArray
 {
 public:
@@ -15,3 +16,4 @@ private:
 
 unsigned long long size;
 };
+#endif

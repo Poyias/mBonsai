@@ -5,7 +5,8 @@
 #include "limits.h"
 
 using namespace sdsl;
-
+#ifndef MBONSAI
+#define MBONSAI
 class mBonsai {
 
 public:
@@ -24,15 +25,19 @@ void setData(char *file){data = new Data(file);}
 void build();
 void insert(Transaction *t);
 unsigned long long setAddress(unsigned long long initAd, unsigned int DIVM);
+unsigned long long getParent(unsigned long long location);
+unsigned long long getInitAd(unsigned long long);
 
 //search bencmarks
 void searchBench(char * file);
 vector <unsigned int> getVector(string s); //readio
-unsigned long long searchItem(unsigned long long initAd, unsigned int DIVM, unsigned int itemID);
+unsigned long long searchItem(unsigned long long initAd,unsigned int DIVM,unsigned int itemID);
 
 //misc
 bool isPrime(unsigned long long input);
 unsigned long long nextPrimeNumber(unsigned long long inputNumber);
+long long getModInverse(long long a, unsigned long long prime);
+void  euclAlgorithm(unsigned long long prime);
 
 //args for printing and counting
 unsigned long long sigma;
@@ -45,13 +50,10 @@ bool singlepath;
 unsigned long long rootID;
 unsigned long long prime;
 unsigned long long a;
+unsigned long long aInv;
 unsigned long long valNotFound;
 unsigned long long randRootAdrs;
 unsigned long long emptyLoc;
 Data* data; // readio
 };
-
-
-
-
-
+#endif

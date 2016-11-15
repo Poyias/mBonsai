@@ -14,7 +14,9 @@ mBonsai::mBonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,
 	origNodeCount=1; // in case of split nums
 	unsigned long long cmax=sigma*M+(M-1);
 	prime=nextPrimeNumber(cmax);
-	a = ULONG_MAX/prime;
+	euclAlgorithm(prime);
+
+	// a = ULONG_MAX/prime;
 	emptyLoc= sigma+2;
 	rootID = rand() % (sigma-1);
 	// hashTable= int_vector <SLEN> (M,emptyLoc);
@@ -28,6 +30,31 @@ mBonsai::mBonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,
 	hashTable[randRootAdrs]=rootID;	
 }
 
+// A naive method to find modulor multiplicative inverse of
+// 'a' under modulo 'm'
+long long mBonsai::getModInverse(long long a, unsigned long long prime){
+  a = a%prime;
+  for (long long x=1; x<prime; x++)
+    if ((a*x) % prime == 1)
+      return x;
+  return -1;
+}
+
+void  mBonsai::euclAlgorithm(unsigned long long prime){
+
+  long long aTemp = (long long)(0.31*(double)prime); // 0.71
+  long long aInvTemp = -1;
+  while(true){
+    aInvTemp= getModInverse(aTemp, prime);
+    if(aInvTemp == -1)
+      aTemp++;
+    else
+      break;
+  }
+  a = aTemp;
+  aInv = aInvTemp;
+  // cout<<"a: "<< a <<" aInv: "<< aInv <<endl;
+}
 /* Function that checks whether or not a given number is
  * a prime number or not.
  */
@@ -101,6 +128,23 @@ void mBonsai::insert(Transaction *t)
 	delete key;
 }// end of insert
 
+unsigned long long mBonsai::getInitAd(unsigned long long loc)
+{
+	//check if empty
+	if (hashTable[loc]==emptyLoc  || (loc==randRootAdrs)) return valNotFound;
+	if (D->D[loc]<7) return D->D[loc];
+	unsigned long long tmpSat = sl->find (loc);	
+	if (tmpSat != 135) return tmpSat+7;
+	return mapSl.find(loc)->second;
+
+}
+
+unsigned long long mBonsai::getParent(unsigned long long location){
+	unsigned long long initAd = getInitAd(location);
+	if(initAd == valNotFound) return valNotFound;
+	hashFunction h;
+	return h.recoverParentLoc(initAd, hashTable[location], M, prime, aInv);	
+}
 
 /* 
  * called by insert
