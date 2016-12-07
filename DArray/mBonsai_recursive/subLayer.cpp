@@ -1,30 +1,26 @@
 #include "subLayer.h"
 #include "limits.h"
 
-SubLayer::SubLayer(double perOfM,unsigned long long M,unsigned int difference)
+SubLayer::SubLayer(double perOfM,unsigned long long universe,unsigned int difference):
+	dif(difference),
+	M(1.25* (((double)universe*perOfM)+1.0)),
+	nodeNumberCount(0),
+	cmax(universe-1),
+	satWidth(7)
 {
 	srand(time(NULL));
-	dif=difference;
-	Msl =1.2* (((double)M*perOfM)+1.0);
-	nodeNumberCount=0;
-	valNotFound = Msl+10;
-	cmax= M-1;
+	valNotFound = M+10;
 	prime=nextPrimeNumber(cmax);
 	a = ULONG_MAX/prime;
-	/*unsigned long long minA=a-Msl;
-	a=a-minA+1;
-	a = rand() % a;
-	a+=minA;*/
-	emptyLoc= (cmax/Msl)+2;
-	// hashTable= int_vector <SLEN2> (Msl,emptyLoc);
-	hashTable = int_vector<0>(0);
-	hashTable.width((unsigned int)log2(emptyLoc)+1); // this should be +2???
-	hashTable.resize(Msl);
-	for(unsigned int i=0; i<Msl; i++) hashTable[i] = emptyLoc;
+	emptyLoc= ceil(cmax/M)+1;
+	quotient_items = int_vector<0>(0);
+	quotient_items.width((unsigned int)log2(emptyLoc)+1 +(satWidth));
+	cout<<"universe: "<<cmax<<", M: "<<M<<", U/M(max q): "<< (cmax/M)<<", emptySymbol: "<<emptyLoc<<endl;
+	quotient_items.resize(M);
+	for(unsigned long long i=0; i<M; i++) quotient_items[i] = (emptyLoc<<satWidth);
 
-	satData = int_vector <7>(Msl,0);
-	V = bit_vector(Msl,0);
-	C = bit_vector(Msl,1);
+	V = bit_vector(M,0);
+	C = bit_vector(M,1);
 }
 
 
@@ -32,7 +28,7 @@ SubLayer::SubLayer(double perOfM,unsigned long long M,unsigned int difference)
  * a prime number or not.
  */
 bool SubLayer::isPrime(unsigned long long input){
-	unsigned int i;
+	unsigned long long i;
 	bool prime = true;
 
 	if(input == 2){
@@ -82,21 +78,20 @@ unsigned long long SubLayer::nextPrimeNumber(unsigned long long inputNumber){
 unsigned long long SubLayer::find(unsigned long long key)
 {
 	unsigned long long cRand= ((key %prime)*a)%prime;
-	unsigned long long initAd= cRand % Msl;
-	unsigned long long quotient= cRand/Msl;
+	unsigned long long initAd= cRand % M;
+	unsigned long long quotient= cRand/M;
 
 	if (V[initAd]==0)
 	{
-		//std::cout<<"lolllla"<<std::endl;
-		return 127+dif+1;
+		return (1<<satWidth)+dif; //127+dif+1;
 	}
 	else
 	{
 		unsigned long long exists=getSatelite(initAd,(getChangeBitLoc(initAd)), quotient); 
 		if(exists!=valNotFound){
-			return satData[curEmptySlot];
+			return (unsigned long long)(quotient_items[curEmptySlot]&((1<<satWidth)-1));
 		}
-		return  135;//satData[exists];//135
+		return  (1<<satWidth)+dif;
 	}	
 }//end find
 
@@ -104,32 +99,29 @@ unsigned long long SubLayer::find(unsigned long long key)
  * which is stored as satelite data.
  * Called in find only when node exists.
 */
-unsigned int SubLayer::getSatelite(unsigned int vVal,unsigned int cVal,
-			unsigned int quotient)
+unsigned long long SubLayer::getSatelite(unsigned long long vVal,unsigned long long cVal,
+			unsigned long long quotient)
 {
-	unsigned int curC;
-	unsigned int tmpSlot;
+	unsigned long long curC;
+	unsigned long long tmpSlot;
 	//check if the value is already inserted
 	if ((itemExists(cVal, quotient))){
 		curEmptySlot=cVal;
 		return cVal; 
-	}else if(hashTable[cVal]==emptyLoc){
+	}else if((quotient_items[cVal]>>satWidth)==emptyLoc){
 		curEmptySlot=cVal;
 		return valNotFound;	
 	}
 	// start going upwards until block ends where c!=0
-	if (cVal==Msl-1) curC=0;
-	else curC=cVal+1;
-
+	curC = (cVal+1)%M;
 	//go upwards towards the end of the block	
-	while (C[curC] == 0)
+	while /*(getC(curC) == 0)   //*/(C[curC] == 0)
 	{	
 		if (itemExists(curC, quotient)){
 			curEmptySlot=curC;
 			return curC;
 		}
-		if (curC==Msl-1) curC=0;
-		else curC++;
+		curC = (curC+1)%M;
 	}
 	return valNotFound;
 }//end getSatelite
@@ -140,16 +132,15 @@ unsigned int SubLayer::getSatelite(unsigned int vVal,unsigned int cVal,
 void SubLayer::insert (unsigned long long key, unsigned int value)
 {
 	unsigned long long cRand= ((key %prime)*a)%prime;
-	unsigned long long initAd= cRand % Msl;
-	unsigned long long quotient= cRand/Msl;
+	unsigned long long initAd= cRand % M;
+	unsigned long long quotient= cRand/M;
 	nodeNumberCount++;
 
-	if (hashTable[initAd]==emptyLoc)
+	if ((quotient_items[initAd]>>satWidth)==emptyLoc)
 	{
-		hashTable[initAd]=quotient;
+		quotient_items[initAd]= (quotient<<satWidth)|(value-dif);
 		V[initAd]=1;
 		C[initAd]=1;
-		satData[initAd]=value-dif;
 	}
 	else
 	{
@@ -159,13 +150,11 @@ void SubLayer::insert (unsigned long long key, unsigned int value)
 				startNewBlock(initAd,changeBit);
 			V[initAd]=1;
 			C[curEmptySlot]=1;
-			hashTable[curEmptySlot]=quotient;
-			satData[curEmptySlot]=value-dif;
+			quotient_items[curEmptySlot]=(quotient<<satWidth)|(value-dif);
 		}else{
 			findSpace(changeBit, quotient); 
-			hashTable[curEmptySlot]=quotient;
+			quotient_items[curEmptySlot]=(quotient<<satWidth)|(value-dif);
 			C[curEmptySlot]=0;
-			satData[curEmptySlot]=value-dif;
 		}
 	}
 }
@@ -176,18 +165,16 @@ void SubLayer::insert (unsigned long long key, unsigned int value)
 */
 void SubLayer::findSpace(unsigned long long cVal, unsigned long long quotient)
 {
-	unsigned int curC;
+	unsigned long long curC;
 	//check if the value is already inserted
-	unsigned int tmpSlot;
+	unsigned long long tmpSlot;
 
-	if ( (itemExists(cVal, quotient)) || (hashTable[cVal]==emptyLoc)){
+	if ( (itemExists(cVal, quotient)) || ((quotient_items[cVal]>>satWidth)==emptyLoc)){
 		curEmptySlot=cVal;
 		return; 
 	}
 	// start going upwards until block ends where c!=0
-	if (cVal==Msl-1) curC=0;
-	else curC=cVal+1;
-
+	curC = (cVal+1)%M;
 	//go upwards towards the end of the block	
 	while (C[curC] == 0)
 	{	
@@ -195,22 +182,19 @@ void SubLayer::findSpace(unsigned long long cVal, unsigned long long quotient)
 			curEmptySlot=curC;
 			return;
 		}
-		if (curC==Msl-1) curC=0;
-		else curC++;
-	}
-	if (curC==0) curC=Msl-1;
-	else curC--;		//go one back to stay in the block
+		curC = (curC+1)%M;
 
+	}
+	//go one back to stay in the block
+	// curC = (curC-1)%M;
+	if(curC==0) curC=M-1;
+	else curC--;
 	// push all the slots upto curC to insert it in curC
 	while(curEmptySlot!=curC){
-		if (curEmptySlot==Msl-1) tmpSlot=0;
-		else tmpSlot=curEmptySlot+1;	
-		
-		hashTable[curEmptySlot] = hashTable[tmpSlot];
+		tmpSlot = (curEmptySlot+1) % M;
+		quotient_items[curEmptySlot] = quotient_items[tmpSlot];
 		C[curEmptySlot] = C[tmpSlot];
-		satData[curEmptySlot] = satData[tmpSlot];
-		if (curEmptySlot==Msl-1) curEmptySlot=0;
-		else curEmptySlot++;	
+		curEmptySlot = (curEmptySlot+1)%M;	
 	}
 	curEmptySlot=curC;
 } // end findSpace
@@ -219,28 +203,21 @@ void SubLayer::findSpace(unsigned long long cVal, unsigned long long quotient)
  * and the changeBit lies in another block.
  * We handle this situation differently.
 */
-void SubLayer::startNewBlock(unsigned int vVal,unsigned int cVal){
+void SubLayer::startNewBlock(unsigned long long vVal,unsigned long long cVal){
 
 	unsigned int tmpSlot;
-	unsigned int curC;
-	if (cVal==Msl-1) curC=0;
-	else curC=cVal+1;
+	unsigned long long curC;
+	curC = (cVal+1)%M;
 	
-	while (C[curC] == 0)
-	{	
-		if (curC==Msl-1) curC=0;
-		else curC++;
-	}
-	while(curEmptySlot!=curC){
-		if (curEmptySlot==Msl-1) tmpSlot=0;
-		else tmpSlot=curEmptySlot+1;
-
-		hashTable[curEmptySlot] = hashTable[tmpSlot];
+	while (C[curC] == 0) curC = (curC+1)%M;
+	
+	while (curEmptySlot!=curC){
+		tmpSlot = (curEmptySlot+1) % M;
+		quotient_items[curEmptySlot] = quotient_items[tmpSlot];
 		C[curEmptySlot] = C[tmpSlot];
-		satData[curEmptySlot] = satData[tmpSlot];
 		curEmptySlot=tmpSlot;	
 	}
-		if ( curEmptySlot==0 ) curEmptySlot=Msl-1;
+		if ( curEmptySlot==0 ) curEmptySlot=M-1;
 		else curEmptySlot--;
 }// end startNewBlock
 
@@ -254,38 +231,36 @@ unsigned long long SubLayer::getChangeBitLoc(unsigned long long curAddress)
 	// count vOnes downwards including current address
 	if (V[curAddress]==1) vOnesDown++;
 	//start moving downwards
-	if (curAddress==0) curAddress=Msl-1;
-	else curAddress--;  
+	if (curAddress==0) curAddress=M-1;
+	else curAddress--;
 	// go downwards untill empty slot and count Vones
-	while(hashTable[curAddress] != emptyLoc)
+	while((quotient_items[curAddress]>>satWidth) != emptyLoc)
 	{
 		if ( V[curAddress]==1 ) vOnesDown++;		
-		if ( curAddress==0 ) curAddress=Msl-1;
+		if ( curAddress==0 ) curAddress=M-1;
 		else curAddress--;
 	}
 	// get emptyslot and start moving upwards
 	curEmptySlot=curAddress;
 	if (vOnesDown==0) return valNotFound;
-	if (curAddress==Msl-1) curAddress=0;
-	else curAddress++; 
+	curAddress = (curAddress+1)%M;
 
 	// go upwards 
 	// count cOnes AFTER emptySlot until conesUp==vOnes down
 	while(cOnesUp<vOnesDown)
 	{
-		if(C[curAddress]==1) cOnesUp++;	
-		if (curAddress==Msl-1) curAddress=0;
-		else curAddress++;
+		if (C[curAddress]==1) cOnesUp++;	
+		curAddress = (curAddress+1)%M;
 	}
 	//return associated C value, sta
-	if (curAddress==0) return (Msl-1);
+	if (curAddress==0) return (M-1);
 	else return --curAddress;
 }
 
 
 bool SubLayer::itemExists(unsigned long long cVal, unsigned long long quotient)
 {
-	if (hashTable[cVal]==quotient)
+	if ((quotient_items[cVal]>>satWidth)==quotient)
 		return true;
 	return false;
 }
