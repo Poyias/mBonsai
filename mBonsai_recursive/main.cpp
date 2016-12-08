@@ -73,22 +73,16 @@ void printSpace(mBonsai mbr) {
 
   // average space per M
   double avgSize =
-      ( // sdsl::size_in_bytes(mbr.quotient_D)+ // Qarray
-          /*sdsl::size_in_bytes(mbr.D.D) + */                // D_0
-          sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) + // BonOr Qarray
-          sdsl::size_in_bytes(mbr.cht_sl.V) +                // BonOr Virgin bit
-          // sdsl::size_in_bytes(mbr.cht_sl.satData) +//BonOr sat Data
-          (mbr.mapSl.size() * 48.0)) *
+      (sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) +
+       sdsl::size_in_bytes(mbr.cht_sl.V) + (mbr.mapSl.size() * 48.0)) *
       8.0;
   avgSize = avgSize / (double)mbr.nodeNumberCount;
-  std::cout << "Space summary: " << std::endl
-            << "quotient_D: "
-            << sdsl::size_in_bytes(mbr.quotient_D) /
-                   (double)mbr.nodeNumberCount * 8.0
-            << " bits \nTotal DArray size: " << avgSize << " bits \nTotal: "
-            << (sdsl::size_in_bytes(mbr.quotient_D) /
-                (double)mbr.nodeNumberCount * 8.0) +
-                   avgSize
-            << " bits\n"
-            << "===========" << std::endl;
+  std::cout << "Space summary: " << std::endl;
+  << "quotient_D: "
+  << sdsl::size_in_bytes(mbr.quotient_D) / (double)mbr.nodeNumberCount * 8.0
+  << " bits \nTotal DArray size: " << avgSize << " bits \nTotal: "
+  << (sdsl::size_in_bytes(mbr.quotient_D) / (double)mbr.nodeNumberCount * 8.0) +
+          avgSize
+  << " bits\n"
+  << "===========" << std::endl;
 }
