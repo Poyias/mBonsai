@@ -56,16 +56,19 @@ void printSpace(mBonsai mbr) {
             << sdsl::size_in_bytes(mbr.quotient_D) /
                    (double)mbr.nodeNumberCount * 8.0
             << std::endl;
-  std::cout << "\tDArray cht_sublayer: "<<std::endl;
-  std::cout << "\t\t" << sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) /
+  std::cout << "\tDArray cht_sublayer: " << std::endl;
+  std::cout << "\t\t"
+            << sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) /
                    (double)mbr.nodeNumberCount * 8.0
             << std::endl;
-  std::cout << "\tD subLayer (V): "<<std::endl;
-  std::cout << "\t\t"<<(sdsl::size_in_bytes(mbr.cht_sl.V)) /
+  std::cout << "\tD subLayer (V): " << std::endl;
+  std::cout << "\t\t"
+            << (sdsl::size_in_bytes(mbr.cht_sl.V)) /
                    (double)mbr.nodeNumberCount * 8.0
             << std::endl;
-  std::cout << "\tmapsl : " <<endl;
-  std::cout << "\t\t" << 48.0 * 8.0 * mbr.mapSl.size() / (double)mbr.nodeNumberCount
+  std::cout << "\tmapsl : " << endl;
+  std::cout << "\t\t"
+            << 48.0 * 8.0 * mbr.mapSl.size() / (double)mbr.nodeNumberCount
             << std::endl;
 
   // average space per M
