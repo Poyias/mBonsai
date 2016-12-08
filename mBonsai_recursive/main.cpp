@@ -78,11 +78,13 @@ void printSpace(mBonsai mbr) {
       8.0;
   avgSize = avgSize / (double)mbr.nodeNumberCount;
   std::cout << "Space summary: " << std::endl;
-  << "quotient_D: "
-  << sdsl::size_in_bytes(mbr.quotient_D) / (double)mbr.nodeNumberCount * 8.0
-  << " bits \nTotal DArray size: " << avgSize << " bits \nTotal: "
-  << (sdsl::size_in_bytes(mbr.quotient_D) / (double)mbr.nodeNumberCount * 8.0) +
-          avgSize
-  << " bits\n"
-  << "===========" << std::endl;
+  std::cout << "quotient_D: "
+            << sdsl::size_in_bytes(mbr.quotient_D) /
+                   (double)mbr.nodeNumberCount * 8.0
+            << " bits \nTotal DArray size: " << avgSize << " bits \nTotal: "
+            << (sdsl::size_in_bytes(mbr.quotient_D) /
+                (double)mbr.nodeNumberCount * 8.0) +
+                   avgSize
+            << " bits\n"
+            << "===========" << std::endl;
 }
