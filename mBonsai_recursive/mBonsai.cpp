@@ -116,26 +116,6 @@ void mBonsai::insert(Transaction *t) {
   delete key;
 } // end of insert
 
-uint64_t mBonsai::getInitAd(uint64_t loc) {
-  // check if empty
-  if (getQuo(loc) == emptyLoc || (loc == randRootAdrs))
-    return valNotFound;
-  if (getD(loc) < 7)
-    return getD(loc);
-  uint64_t tmpSat = cht_sl.find(loc);
-  if (tmpSat != 135)
-    return tmpSat + 7;
-  return mapSl.find(loc)->second;
-}
-
-uint64_t mBonsai::getParent(uint64_t location) {
-  uint64_t initAd = getInitAd(location);
-  if (initAd == valNotFound)
-    return valNotFound;
-  hashFunction h;
-  return h.recoverParentLoc(initAd, getQuo(location), M, prime, aInv);
-}
-
 /*
  * called by insert
  * it sets the quotient value in the correct location
@@ -323,3 +303,23 @@ uint64_t mBonsai::searchItem(uint64_t initAd, uint32_t DIVM, uint32_t itemID) {
     }
   } // end while
 } // end searchItem
+
+/*uint64_t mBonsai::getInitAd(uint64_t loc) {
+  // check if empty
+  if (getQuo(loc) == emptyLoc || (loc == randRootAdrs))
+    return valNotFound;
+  if (getD(loc) < 7)
+    return getD(loc);
+  uint64_t tmpSat = cht_sl.find(loc);
+  if (tmpSat != 135)
+    return tmpSat + 7;
+  return mapSl.find(loc)->second;
+}
+*/
+/*uint64_t mBonsai::getParent(uint64_t location) {
+  uint64_t initAd = getInitAd(location);
+  if (initAd == valNotFound)
+    return valNotFound;
+  hashFunction h;
+  return h.recoverParentLoc(initAd, getQuo(location), M, prime, aInv);
+}*/

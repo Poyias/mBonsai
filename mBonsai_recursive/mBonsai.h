@@ -20,9 +20,10 @@ public:
   void build();
   void insert(Transaction *t);
   uint64_t setAddress(uint64_t initAd, uint32_t DIVM);
+/*
   uint64_t getParent(uint64_t location);
   uint64_t getInitAd(uint64_t);
-
+*/
   // search bencmarks
   void searchBench(char *file);
   std::vector<uint32_t> getVector(std::string s); // readio

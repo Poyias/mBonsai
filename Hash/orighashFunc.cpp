@@ -1,3 +1,5 @@
+#ifndef DARRAGH_HASH
+#define DARRAGH value
 #include "orighashFunc.h"
 
 /*
@@ -5,52 +7,56 @@
  * quotient value (stored in the hashtable)
  * mod value (is the initial address of the key)
 */
-origHash origHash::getKey(unsigned long long parentLoc, unsigned long long itemID,
-unsigned long long keyJ,unsigned long long M,unsigned long long prime, unsigned long long a)
-{
-	origHash key;
-	unsigned long long c= (itemID*(unsigned long long)32+keyJ)*M+parentLoc;
-	unsigned long long cRand= ((c %prime)*a);
-	cRand = cRand % prime;
-	initAd= cRand % M;
-	quotient= cRand/M; //it includes the parents J
-	return key;
+origHash origHash::getKey(uint64_t parentLoc,
+                          uint64_t itemID, uint64_t keyJ,
+                          uint64_t M, uint64_t prime,
+                          uint64_t a) {
+  origHash key;
+  uint64_t c =
+      (itemID * (uint64_t)32 + keyJ) * M + parentLoc;
+  uint64_t cRand = ((c % prime) * a);
+  cRand = cRand % prime;
+  initAd = cRand % M;
+  quotient = cRand / M; // it includes the parents J
+  return key;
 }
 
-/*
- *** The functions below work only if a is carefully selected such that its mod inverse (aInv)
- *** will be able to reverse the hashfunction
-*/
-
+#endif
 /*
  * reverses the hashfunction to get the itemID
 */
-unsigned int origHash::recoverID(unsigned long long initAd, unsigned int DIVM, unsigned long long M,unsigned long long prime, unsigned long long aInv)
-{
-	unsigned long long cRandRec = (DIVM*M+initAd);
-	unsigned long long cRec = (aInv*cRandRec)%prime;
-	unsigned int IDRec = cRec/(32*M);
-	return IDRec;	
-}
+/*uint32_t origHash::recoverID(uint64_t initAd, uint32_t DIVM,
+                                 uint64_t M, uint64_t prime,
+                                 uint64_t aInv) {
+  uint64_t cRandRec = (DIVM * M + initAd);
+  uint64_t cRec = (aInv * cRandRec) % prime;
+  uint32_t IDRec = cRec / (32 * M);
+  return IDRec;
+}*/
 
 /*
  * reverses the hashfunction to get the parent location
 */
-unsigned long long origHash::recoverParentLoc(unsigned long long initAd, unsigned int DIVM, unsigned long long M,unsigned long long prime, unsigned long long aInv)
-{
-	unsigned long long cRandRec = (DIVM*M+initAd);
-	unsigned long long cRec = (aInv*cRandRec)%prime;
-	unsigned long long  parentLoc = cRec % M;
-	return parentLoc;	
-}
+/*uint64_t origHash::recoverParentLoc(uint64_t initAd,
+                                              uint32_t DIVM,
+                                              uint64_t M,
+                                              uint64_t prime,
+                                              uint64_t aInv) {
+  uint64_t cRandRec = (DIVM * M + initAd);
+  uint64_t cRec = (aInv * cRandRec) % prime;
+  uint64_t parentLoc = cRec % M;
+  return parentLoc;
+}*/
 
 /*
  * reverses the hashfunction to get the lambda value
 */
-unsigned long long origHash::recoverJ(unsigned long long initAd, unsigned int DIVM, 	unsigned long long M,unsigned long long prime, unsigned long long aInv)
-{
-	unsigned long long cRandRec = (DIVM*M+initAd);
-	unsigned long long cRec = (aInv*cRandRec)%prime;
-	unsigned long long JNumber = (cRec % (32*M))/M;
-	return JNumber;	
-}
+/*uint64_t origHash::recoverJ(uint64_t initAd,
+                                      uint32_t DIVM, uint64_t M,
+                                      uint64_t prime,
+                                      uint64_t aInv) {
+  uint64_t cRandRec = (DIVM * M + initAd);
+  uint64_t cRec = (aInv * cRandRec) % prime;
+  uint64_t JNumber = (cRec % (32 * M)) / M;
+  return JNumber;
+}*/

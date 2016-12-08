@@ -1,27 +1,25 @@
-#ifndef DATA
-#define DATA
+#ifndef READIO_DATA
+#define READIO_DATA
 #include <stdio.h>
-class Transaction
-{
+class Transaction {
 public:
+  int length;
+  int *t;
 
-	int length;
-	int *t;
-
-	Transaction(int l) : length(l) {t = new int[l];}
-	Transaction(const Transaction &tr);
-	~Transaction(){delete [] t;}
+  Transaction(int l) : length(l) { t = new int[l]; }
+  Transaction(const Transaction &tr);
+  ~Transaction() { delete[] t; }
 };
 
-class Data
-{
+class Data {
 public:
-	Data(char *filename);
-	~Data();
-	Transaction *getNext();
-	char *fn;
+  Data(char *filename);
+  ~Data();
+  Transaction *getNext();
+  char *fn;
+
 private:
-	FILE *in;
-	int current;
+  FILE *in;
+  int current;
 };
 #endif
