@@ -1,5 +1,5 @@
-#include "mBonsai.h"
 #include "limits.h"
+#include "mBonsai.h"
 /* arguments
  * 1 nodeNum
  * 2 alphabet = sigma
@@ -7,57 +7,93 @@
  * 4 loadFactor = 0.8
  * 5 searchFile
 */
-void printSpace(mBonsai*);
-void printCHTSpace(mBonsai*);
-int main(int argc, char *argv[])
-{
-	//arguments
+void printSpace(mBonsai);
+void printCHTSpace(mBonsai);
+int main(int argc, char *argv[]) {
+  // arguments
 
-	unsigned int nodeNum = atoi(argv[1]);
-	unsigned int sigma = atoi(argv[2]);
-	char* file = argv[3];
-	double loadFactor = atof(argv[4]);
-	char* searchFile= argv[5];
+  unsigned int nodeNum = atoi(argv[1]);
+  unsigned int sigma = atoi(argv[2]);
+  char *file = argv[3];
+  double loadFactor = atof(argv[4]);
+  char *searchFile = argv[5];
 
-	mBonsai *mbr =  new mBonsai(nodeNum, sigma, loadFactor, file);
-    auto begin = chrono::high_resolution_clock::now(); // wall time 
-	mbr->build(); // build
-	// cout<<"nodeNumberCount: "<<mbr->nodeNumberCount<<endl;
-	// mbr->searchBench(searchFile); //search benchmark
-	auto end = chrono::high_resolution_clock::now();
-    auto dur = end - begin;
-    auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count();
-    cout << "Total wall time[ "<<ns/1000000000<<" s]" << endl;
-	/*printSpace(mbr);*/
-	printCHTSpace(mbr);
-return 0;
+  if (argc < 5) {
+    std::cerr << "Use " << argv[0]
+              << " <nodeNum> <sigma> <file_path> <1+epsilon> [searchFile]"
+              << std::endl;
+    exit(-1);
+  }
+  mBonsai mbr(nodeNum, sigma, loadFactor, file);
+  auto begin = std::chrono::high_resolution_clock::now(); // wall time
+  mbr.build();                                            // build
+  // mbr.searchBench(searchFile); //search benchmark
+  auto end = std::chrono::high_resolution_clock::now();
+  auto dur = end - begin;
+  auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count();
+  std::cout << "Total wall time[ " << ns / 1000000000 << " s]" << std::endl;
+  std::cout << "nodeNum: " << mbr.nodeNumberCount << std::endl;
+  /*printSpace(mbr);*/
+  printCHTSpace(mbr);
+  return 0;
 }
 
-void printCHTSpace(mBonsai* mbr){
-cout<<"CHT space(per M): "<<endl;
-cout<<"quotients_sat: " 	<< size_in_bytes(mbr->sl->quotient_items)/(double)mbr->sl->M*8.0 << endl <<"bitvectors (V+C): " << (size_in_bytes(mbr->sl->V)+size_in_bytes(mbr->sl->C))/(double)mbr->sl->M*8.0<< endl<<"=========="<<endl;
+void printCHTSpace(mBonsai mbr) {
+  std::cout << "CHT space(per M): " << std::endl;
+  std::cout << "quotients_sat: "
+            << sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) /
+                   (double)mbr.cht_sl.M * 8.0
+            << std::endl;
+  std::cout << "bitvectors (V+C): "
+            << sdsl::size_in_bytes(mbr.cht_sl.V) / (double)mbr.cht_sl.M * 8.0
+            << std::endl;
+  std::cout << "==========" << std::endl;
 }
 
-void printSpace(mBonsai* mbr){
-cout << "space in bits (in detail): "<<"\tht: "  << size_in_bytes(mbr->hashTable)/(double)mbr->nodeNumberCount*8.0 << endl <<
-	"\t\tmain D layer: " 	<< size_in_bytes(mbr->D->D)/(double)mbr->nodeNumberCount*8.0 << endl <<
-	"\t\tD sublayer: " 	<< size_in_bytes(mbr->sl->quotient_items)/(double)mbr->nodeNumberCount*8.0 << endl <<
-	"\t\tD subLayer (V+C): " << (size_in_bytes(mbr->sl->V)/*+size_in_bytes(mbr->sl->C)*/)/(double)mbr->nodeNumberCount*8.0<< endl<<
-	// "\t\tD sublayer satellite: " << 8.0*(size_in_bytes(mbr->sl->satData))/(double)mbr->nodeNumberCount<< endl <<
-	"\t\tmapsl : "	<< 48.0*8.0*mbr->mapSl.size()/(double)mbr->nodeNumberCount<<endl;
+void printSpace(mBonsai mbr) {
+  std::cout << "space in bits (in detail): "
+            << "\tht: "
+            << sdsl::size_in_bytes(mbr.quotient_D) /
+                   (double)mbr.nodeNumberCount * 8.0
+            << std::endl
+            /*            << "\t\tmain D layer: "
+                        << sdsl::size_in_bytes(mbr.D.D) /
+               (double)mbr.nodeNumberCount * 8.0
+                        << std::endl*/
+            << "\t\tD sublayer: "
+            << sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) /
+                   (double)mbr.nodeNumberCount * 8.0
+            << std::endl
+            << "\t\tD subLayer (V+C): "
+            << (sdsl::size_in_bytes(mbr.cht_sl.V)) /
+                   (double)mbr.nodeNumberCount * 8.0
+            << std::endl
+            <<
+      // "\t\tD sublayer satellite: " <<
+      // 8.0*(sdsl::size_in_bytes(mbr.cht_sl.satData))/(double)mbr.nodeNumberCount<<
+      // std::endl <<
+      "\t\tmapsl : "
+            << 48.0 * 8.0 * mbr.mapSl.size() / (double)mbr.nodeNumberCount
+            << std::endl;
 
-	//average space per M
-	double avgSize = (  //size_in_bytes(mbr->hashTable)+ // Qarray
-						size_in_bytes(mbr->D->D) + //D_0
-						size_in_bytes(mbr->sl->quotient_items) + //BonOr Qarray
-						size_in_bytes(mbr->sl->V) + //BonOr Virgin bit
-						// size_in_bytes(mbr->sl->C) + //BonOr Change bit
-						// size_in_bytes(mbr->sl->satData) +//BonOr sat Data
-						(mbr->mapSl.size()*48.0)
-					 )*8.0;
-	avgSize=avgSize/(double)mbr->nodeNumberCount;
-	cout<< "Space summary: "<<endl<<
-	"hashTable: "<<  size_in_bytes(mbr->hashTable)/(double)mbr->nodeNumberCount*8.0<< " bits \nTotal DArray size: "<<
-	avgSize<<" bits \nTotal: "<<  (size_in_bytes(mbr->hashTable)/(double)mbr->nodeNumberCount*8.0 ) + avgSize<<" bits\n"<<
-	"==========="<<endl;
+  // average space per M
+  double avgSize =
+      ( // sdsl::size_in_bytes(mbr.quotient_D)+ // Qarray
+          /*sdsl::size_in_bytes(mbr.D.D) + */                // D_0
+          sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) + // BonOr Qarray
+          sdsl::size_in_bytes(mbr.cht_sl.V) +                // BonOr Virgin bit
+          // sdsl::size_in_bytes(mbr.cht_sl.satData) +//BonOr sat Data
+          (mbr.mapSl.size() * 48.0)) *
+      8.0;
+  avgSize = avgSize / (double)mbr.nodeNumberCount;
+  std::cout << "Space summary: " << std::endl
+            << "quotient_D: "
+            << sdsl::size_in_bytes(mbr.quotient_D) /
+                   (double)mbr.nodeNumberCount * 8.0
+            << " bits \nTotal DArray size: " << avgSize << " bits \nTotal: "
+            << (sdsl::size_in_bytes(mbr.quotient_D) /
+                (double)mbr.nodeNumberCount * 8.0) +
+                   avgSize
+            << " bits\n"
+            << "===========" << std::endl;
 }

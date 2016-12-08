@@ -1,59 +1,66 @@
-#include "sdsl/int_vector.hpp"
+#ifndef MBONSAIRECURSIVE_MBONSAI
+#define MBONSAIRECURSIVE_MBONSAI
+#include "../DArray/mBonsai_recursive/cht_subLayer.h"
 #include "../readio/data.h"
-#include "../DArray/mBonsai_recursive/DArray.h"
-#include "../DArray/mBonsai_recursive/subLayer.h"
 #include "limits.h"
-
-using namespace sdsl;
-#ifndef MBONSAI
-#define MBONSAI
+#include "sdsl/int_vector.hpp"
 class mBonsai {
 
 public:
-//structure
-int_vector<0> hashTable;
-DArray *D; //displacement array 
-SubLayer *sl; //sublayer displacement array 
-map<unsigned int,unsigned int> mapSl; // overflown Displacement
+  sdsl::int_vector<0> quotient_D;
+  cht_subLayer cht_sl;                // sublayer displacement array
+  std::map<uint32_t, uint32_t> mapSl; // overflown Displacement
 
-//init
-mBonsai(){}
-mBonsai(unsigned int nodeNumber, unsigned int sigma, double loadFactor,char* file);
-void setData(char *file){data = new Data(file);}
+  // init
+  mBonsai() {}
+  mBonsai(uint32_t nodeNumber, uint32_t sigma, double loadFactor, char *file);
+  void setData(char *file) { data = new Data(file); }
 
-//build
-void build();
-void insert(Transaction *t);
-unsigned long long setAddress(unsigned long long initAd, unsigned int DIVM);
-unsigned long long getParent(unsigned long long location);
-unsigned long long getInitAd(unsigned long long);
+  // build
+  void build();
+  void insert(Transaction *t);
+  uint64_t setAddress(uint64_t initAd, uint32_t DIVM);
+  uint64_t getParent(uint64_t location);
+  uint64_t getInitAd(uint64_t);
 
-//search bencmarks
-void searchBench(char * file);
-vector <unsigned int> getVector(string s); //readio
-unsigned long long searchItem(unsigned long long initAd,unsigned int DIVM,unsigned int itemID);
+  // search bencmarks
+  void searchBench(char *file);
+  std::vector<uint32_t> getVector(std::string s); // readio
+  uint64_t searchItem(uint64_t initAd, uint32_t DIVM, uint32_t itemID);
 
-//misc
-bool isPrime(unsigned long long input);
-unsigned long long nextPrimeNumber(unsigned long long inputNumber);
-long long getModInverse(long long a, unsigned long long prime);
-void  euclAlgorithm(unsigned long long prime);
+  // misc
+  bool isPrime(uint64_t input);
+  uint64_t nextPrimeNumber(uint64_t inputNumber);
+  long long getModInverse(long long a, uint64_t prime);
+  void euclAlgorithm(uint64_t prime);
 
-//args for printing and counting
-unsigned long long sigma;
-unsigned long long M;
-unsigned int nodeNumberCount;
-unsigned int origNodeCount;
+  inline uint64_t getQuo(uint64_t loc) { return quotient_D[loc] >> dWidth; }
+  inline uint64_t getD(uint64_t loc) {
+    return quotient_D[loc] & ((1 << dWidth) - 1);
+  }
+  inline uint64_t setQuo(uint64_t loc, uint64_t quo) {
+    quotient_D[loc] = quo << dWidth;
+  }
+
+  inline uint64_t setQuo_D(uint64_t loc, uint64_t quo, uint64_t D) {
+    quotient_D[loc] = (quo << dWidth) | D;
+  }
+  // args for printing and counting
+  uint64_t sigma;
+  uint64_t M;
+  uint32_t nodeNumberCount;
+  uint32_t origNodeCount;
 
 private:
-bool singlepath;
-unsigned long long rootID;
-unsigned long long prime;
-unsigned long long a;
-unsigned long long aInv;
-unsigned long long valNotFound;
-unsigned long long randRootAdrs;
-unsigned long long emptyLoc;
-Data* data; // readio
+  bool singlepath;
+  uint64_t rootID;
+  uint64_t prime;
+  uint64_t a;
+  uint64_t aInv;
+  uint64_t valNotFound;
+  uint64_t randRootAdrs;
+  uint64_t emptyLoc;
+  uint8_t dWidth;
+  Data *data; // readio
 };
 #endif
