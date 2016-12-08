@@ -33,47 +33,39 @@ int main(int argc, char *argv[]) {
   auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count();
   std::cout << "Total wall time[ " << ns / 1000000000 << " s]" << std::endl;
   std::cout << "nodeNum: " << mbr.nodeNumberCount << std::endl;
-  /*printSpace(mbr);*/
-  printCHTSpace(mbr);
+  printSpace(mbr);
+  // printCHTSpace(mbr);
   return 0;
 }
 
 void printCHTSpace(mBonsai mbr) {
-  std::cout << "CHT space(per M): " << std::endl;
-  std::cout << "quotients_sat: "
+  std::cout << "CHT space(per cht_M): " << std::endl;
+  std::cout << "quotients_sat_C: "
             << sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) /
                    (double)mbr.cht_sl.M * 8.0
             << std::endl;
-  std::cout << "bitvectors (V+C): "
+  std::cout << "bitvectors (V): "
             << sdsl::size_in_bytes(mbr.cht_sl.V) / (double)mbr.cht_sl.M * 8.0
             << std::endl;
   std::cout << "==========" << std::endl;
 }
 
 void printSpace(mBonsai mbr) {
-  std::cout << "space in bits (in detail): "
-            << "\tht: "
+  std::cout << "space in bits (in detail): " << std::endl;
+  std::cout << "\tquotient_D: "
             << sdsl::size_in_bytes(mbr.quotient_D) /
                    (double)mbr.nodeNumberCount * 8.0
-            << std::endl
-            /*            << "\t\tmain D layer: "
-                        << sdsl::size_in_bytes(mbr.D.D) /
-               (double)mbr.nodeNumberCount * 8.0
-                        << std::endl*/
-            << "\t\tD sublayer: "
-            << sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) /
+            << std::endl;
+  std::cout << "\tDArray cht_sublayer: "<<std::endl;
+  std::cout << "\t\t" << sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) /
                    (double)mbr.nodeNumberCount * 8.0
-            << std::endl
-            << "\t\tD subLayer (V+C): "
-            << (sdsl::size_in_bytes(mbr.cht_sl.V)) /
+            << std::endl;
+  std::cout << "\tD subLayer (V): "<<std::endl;
+  std::cout << "\t\t"<<(sdsl::size_in_bytes(mbr.cht_sl.V)) /
                    (double)mbr.nodeNumberCount * 8.0
-            << std::endl
-            <<
-      // "\t\tD sublayer satellite: " <<
-      // 8.0*(sdsl::size_in_bytes(mbr.cht_sl.satData))/(double)mbr.nodeNumberCount<<
-      // std::endl <<
-      "\t\tmapsl : "
-            << 48.0 * 8.0 * mbr.mapSl.size() / (double)mbr.nodeNumberCount
+            << std::endl;
+  std::cout << "\tmapsl : " <<endl;
+  std::cout << "\t\t" << 48.0 * 8.0 * mbr.mapSl.size() / (double)mbr.nodeNumberCount
             << std::endl;
 
   // average space per M
