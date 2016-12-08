@@ -1,23 +1,18 @@
 #include "blockedDArray.h"
 
-blockedDArray::blockedDArray(unsigned int size, unsigned int numBlocks)
-{	
-	this->size=size;
-	darray = new gammaBlock*[numBlocks];
-	for(unsigned int i=0; i<numBlocks;i++){
-		darray[i] = new gammaBlock(size);
-	}
+blockedDArray::blockedDArray(uint64_t size, uint64_t numBlocks) : size(size) {
+  darray = new gammaBlock *[numBlocks];
+  for (uint64_t i = 0; i < numBlocks; i++) {
+    darray[i] = new gammaBlock(size);
+  }
 }
 
-unsigned int blockedDArray::get(unsigned int loc)
-{
-	unsigned int gammaBlock= loc/size;
-	return darray[gammaBlock]->get(loc%size);
+uint64_t blockedDArray::get(uint64_t loc) {
+  uint64_t gammaBlock = loc / size;
+  return darray[gammaBlock]->get(loc % size);
 }
 
-void blockedDArray::setT(unsigned int loc,unsigned int item)
-{
-	unsigned int gammaBlock= loc/size;    //get gammaBlock
-	darray[gammaBlock]->set ((unsigned int)(loc%size), item );
-	
+void blockedDArray::set(uint64_t loc, uint64_t item) {
+  uint64_t gammaBlock = loc / size; // get gammaBlock
+  darray[gammaBlock]->set((uint64_t)(loc % size), item);
 }

@@ -1,20 +1,15 @@
+#ifndef MBONSAIGAMMA_BLOCKEDDARRAY
+#define MBONSAIGAMMA_BLOCKEDDARRAY
 #include "gammaBlock.h"
 #include "sdsl/int_vector.hpp"
-
-using namespace std;
-using namespace sdsl;
-
-class blockedDArray
-{
+class blockedDArray {
 public:
+  gammaBlock **darray;
+  uint64_t size;
 
-gammaBlock **darray;
-unsigned int size;
-
-blockedDArray(){}
-blockedDArray(unsigned int size, unsigned int numBlocks);
-unsigned int get(unsigned int loc);
-void set (unsigned int loc,unsigned int item);
-void setT(unsigned int loc,unsigned int item);
-
+  blockedDArray() {}
+  blockedDArray(uint64_t size, uint64_t numBlocks);
+  uint64_t get(uint64_t loc);
+  void set(uint64_t loc, uint64_t item);
 };
+#endif
