@@ -31,13 +31,30 @@ int main(int argc, char *argv[]) {
   auto end = std::chrono::high_resolution_clock::now();
   auto dur = end - begin;
   auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count();
-  std::cout << "Total wall time[ " << ns / 1000000000 << " s]" << std::endl;
+  std::cout << "Total wall time Build[ " << ns / 1000000000 << " s]"
+            << std::endl;
   std::cout << "nodeNum: " << mbr.nodeNumberCount << std::endl;
-  printSpace(mbr);
+  mbr.extendTrie(2.0);
+  std::cout << "===" << std::endl;
+  mbr.searchBench(searchFile);
+  // mbr.testInvertHash();
+  // printSpace(mbr);
   // printCHTSpace(mbr);
-  return 0;
-}
 
+  /*  testParent(mbr);
+*/ return 0;
+}
+/*void testParent(){
+  for (uint64_t i = 0; i<mbr.M){
+    if (i!=mbr.randRootAdrs){
+
+    }
+  }
+}*/
+
+/*
+ * Prints the Compact hash table per CHT_size
+*/
 void printCHTSpace(mBonsai mbr) {
   std::cout << "CHT space(per cht_M): " << std::endl;
   std::cout << "quotients_sat_C: "
@@ -49,7 +66,9 @@ void printCHTSpace(mBonsai mbr) {
             << std::endl;
   std::cout << "==========" << std::endl;
 }
-
+/*
+ * Prints detailed space sage of mBonsai
+*/
 void printSpace(mBonsai mbr) {
   std::cout << "space in bits (in detail): " << std::endl;
   std::cout << "\tquotient_D: "
@@ -66,7 +85,7 @@ void printSpace(mBonsai mbr) {
             << (sdsl::size_in_bytes(mbr.cht_sl.V)) /
                    (double)mbr.nodeNumberCount * 8.0
             << std::endl;
-  std::cout << "\tmapsl : " << endl;
+  std::cout << "\tmapsl : " << std::endl;
   std::cout << "\t\t"
             << 48.0 * 8.0 * mbr.mapSl.size() / (double)mbr.nodeNumberCount
             << std::endl;
