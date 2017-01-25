@@ -1,15 +1,19 @@
 #ifndef HASH_RECANDGAMMA
 #define HASH_RECANDGAMMA
+#include <cstdint>
 class hashFunction {
 public:
-  unsigned long long initAd;
-  unsigned long long quotient;
+  uint64_t initAd;
+  uint64_t quotient;
 
-  hashFunction getKey(unsigned long long parentLoc, unsigned long long itemID,
-                      unsigned long long M, unsigned long long prime,
-                      unsigned long long a);
+  hashFunction getKey(uint64_t parentLoc, uint64_t itemID,
+                      uint64_t M, uint64_t prime,
+                      uint64_t a);
 
-  inline unsigned long long getInitAd() { return initAd; }
-  inline unsigned int getQuotient() { return quotient; }
+  inline uint64_t getInitAd() { return initAd; }
+  inline uint32_t getQuotient() { return quotient; }
+
+  uint32_t recoverID(uint64_t initAd, uint32_t DIVM, uint64_t M,uint64_t prime, uint64_t aInv);
+  uint64_t recoverParentLoc(uint64_t initAd, uint32_t DIVM, uint64_t M,uint64_t prime, uint64_t aInv);
 };
 #endif
