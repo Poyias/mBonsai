@@ -1,12 +1,14 @@
 #ifndef READIO_DATA
 #define READIO_DATA
 #include <stdio.h>
+#include <stdint.h>
+
 class Transaction {
 public:
-  int length;
-  int *t;
+  uint64_t length;
+  uint64_t *t;
 
-  Transaction(int l) : length(l) { t = new int[l]; }
+  Transaction(uint64_t l) : length(l) { t = new uint64_t[l]; }
   Transaction(const Transaction &tr);
   ~Transaction() { delete[] t; }
 };
@@ -20,6 +22,6 @@ public:
 
 private:
   FILE *in;
-  int current;
+  uint64_t current;
 };
 #endif

@@ -4,8 +4,8 @@ using namespace std;
 
 Transaction::Transaction(const Transaction &tr) {
   length = tr.length;
-  t = new int[tr.length];
-  for (int i = 0; i < length; i++)
+  t = new uint64_t[tr.length];
+  for (uint64_t i = 0; i < length; i++)
     t[i] = tr.t[i];
 }
 
@@ -21,12 +21,12 @@ Data::~Data() {
 }
 
 Transaction *Data::getNext() {
-  vector<int> list;
+  vector<uint64_t> list;
   char c;
 
   // read row by row, push in list
   do {
-    int item = 0, pos = 0;
+    uint64_t item = 0, pos = 0;
     c = getc(in);
     while ((c >= '0') && (c <= '9')) {
       item *= 10;
@@ -46,7 +46,7 @@ Transaction *Data::getNext() {
 
   // put items in *t
   Transaction *t = new Transaction(list.size());
-  for (int i = 0; i < int(list.size()); i++)
+  for (uint64_t i = 0; i < uint64_t(list.size()); i++)
     t->t[i] = list[i];
 
   return t;

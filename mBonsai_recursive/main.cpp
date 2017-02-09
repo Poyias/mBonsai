@@ -12,12 +12,11 @@ void printCHTSpace(mBonsai);
 int main(int argc, char *argv[]) {
   // arguments
 
-  unsigned int nodeNum = atoi(argv[1]);
-  unsigned int sigma = atoi(argv[2]);
+  uint64_t nodeNum = atoi(argv[1]);
+  uint64_t sigma = atoi(argv[2]);
   char *file = argv[3];
   double loadFactor = atof(argv[4]);
   char *searchFile = argv[5];
-
   if (argc < 5) {
     std::cerr << "Use " << argv[0]
               << " <nodeNum> <sigma> <file_path> <1+epsilon> [searchFile]"
@@ -31,12 +30,20 @@ int main(int argc, char *argv[]) {
   auto end = std::chrono::high_resolution_clock::now();
   auto dur = end - begin;
   auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count();
-  std::cout << "Total wall time Build[ " << ns / 1000000000 << " s]"
+  std::cout << "Total wall time Build[ " << ns / 1000000 << " ms]"
             << std::endl;
   std::cout << "nodeNum: " << mbr.nodeNumberCount << std::endl;
-  mbr.extendTrie(2.0);
+  std::cout << "capacity: " << (double)mbr.cht_sl.nodeNumberCount/(double)mbr.cht_sl.quotient_items_C.size() << std::endl;
+  // mbr.traverse();
+  begin = std::chrono::high_resolution_clock::now(); // wall time
+  mbr.naiveTraverse();
+  end = std::chrono::high_resolution_clock::now();
+  dur = end - begin;
+  ns = std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count();
+  std::cout << "Total wall time naiveTraverse[ " << ns / 1000000 << " ms]"
+            << std::endl;
+  // mbr.searchBench(searchFile);
   std::cout << "===" << std::endl;
-  mbr.searchBench(searchFile);
   // mbr.testInvertHash();
   // printSpace(mbr);
   // printCHTSpace(mbr);
@@ -77,13 +84,13 @@ void printSpace(mBonsai mbr) {
             << std::endl;
   std::cout << "\tDArray cht_sublayer: " << std::endl;
   std::cout << "\t\t"
-            << sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) /
-                   (double)mbr.nodeNumberCount * 8.0
+            << (sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) /
+                   (double)mbr.nodeNumberCount) * 8.0
             << std::endl;
   std::cout << "\tD subLayer (V): " << std::endl;
   std::cout << "\t\t"
-            << (sdsl::size_in_bytes(mbr.cht_sl.V)) /
-                   (double)mbr.nodeNumberCount * 8.0
+            << (sdsl::size_in_bytes(mbr.cht_sl.V) /
+                   (double)mbr.nodeNumberCount) * 8.0
             << std::endl;
   std::cout << "\tmapsl : " << std::endl;
   std::cout << "\t\t"
@@ -97,13 +104,15 @@ void printSpace(mBonsai mbr) {
       8.0;
   avgSize = avgSize / (double)mbr.nodeNumberCount;
   std::cout << "Space summary: " << std::endl;
-  std::cout << "quotient_D: "
-            << sdsl::size_in_bytes(mbr.quotient_D) /
-                   (double)mbr.nodeNumberCount * 8.0
-            << " bits \nTotal DArray size: " << avgSize << " bits \nTotal: "
-            << (sdsl::size_in_bytes(mbr.quotient_D) /
-                (double)mbr.nodeNumberCount * 8.0) +
-                   avgSize
-            << " bits\n"
+  std::cout << "quotient only: "
+            << ((sdsl::size_in_bytes(mbr.quotient_D) /
+                   (double)mbr.nodeNumberCount) * 8.0) - 3.0
+            << " bits \nTotal DArray size: " <<
+              (3.0 +
+              (((sdsl::size_in_bytes(mbr.cht_sl.quotient_items_C) + 
+                sdsl::size_in_bytes(mbr.cht_sl.V) +
+                48.0 * mbr.mapSl.size())*8.0)
+               )/ (double)mbr.nodeNumberCount)
+              << " bits\n"
             << "===========" << std::endl;
 }
