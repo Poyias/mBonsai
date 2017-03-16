@@ -1,25 +1,27 @@
-#mame-Bonsai
-
-##Description
+mame-Bonsai
+=========
+Description
+-----------
 m-Bonsai is a compact representation of tries using hashtables.
 
 Making use of any mame-Bonsai or Bonsai implementation for research or commercial purposes, the reference will be:
 
 A. Poyias and R. Raman. [Improved Practical Compact Tynamic Tries.](http://dblp.uni-trier.de/pers/hd/p/Poyias:Andreas) Proc. SPIRE 2015, pp. 324-336.
 
-##Implementations:
+Implementations:
+-----------
 1. mame-Bonsai(recursive),proposed by A. Poyias and R. Raman.
 2. mame-Bonsai(gamma), proposed by A. Poyias and R. Raman.
 3. Bonsai, proposed by J. Darragh and J. Cleary.
 
-
-##m-Bonsai approaches:
+m-Bonsai approaches:
 1. m-Bonsai(recursive):
     Fast and compact approach.
 2. m-Bonsai (gamma):
     Even more compact approach but slower than m-Bonsai(recursive).
 
-###Installation
+Installation
+-----------
 
 To be able to compile the m-Bonsai libraries.
 
@@ -29,7 +31,8 @@ To be able to compile the m-Bonsai libraries.
 3. run .sh file
 
 
-##Datasets
+Datasets
+-----------
 Given two datasets in the format of transaction database where each line
 is a sequence of characters.
 ### Frequent Itemset Mining (FIM) dataset
