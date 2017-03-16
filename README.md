@@ -20,6 +20,15 @@ m-Bonsai approaches:
 2. m-Bonsai (gamma):
     Even more compact approach but slower than m-Bonsai(recursive).
 
+ADT:
+-----------
+1. create(): Create a new empty tree.
+2. getRoot(): return the root of the current tree.
+3. getChild (v, c): return child node of node v with symbol c, if any (and return −1 if no such child exists).
+4. getParent(v): return the parent of node v.
+5. addChild (v, c): add a new child of v with symbol c and return the newly created node.
+6. delLeaf (v, c): delete the child of v with symbol c, provided that the child indicated is a leaf (if the user asks to delete a child that is not a leaf, the subsequent operations may not execute correctly).
+
 Installation
 -----------
 
