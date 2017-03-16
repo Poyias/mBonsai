@@ -9,7 +9,8 @@ Making use of any mame-Bonsai or Bonsai implementation for research or commercia
 A. Poyias and R. Raman. [Improved Practical Compact Tynamic Tries.](http://dblp.uni-trier.de/pers/hd/p/Poyias:Andreas) Proc. SPIRE 2015, pp. 324-336.
 
 Paper .pdf
-............
+-----------
+See the .pdf file for more details.
 
 Implementations:
 -----------
