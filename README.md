@@ -15,7 +15,6 @@ Implementations:
 3. Bonsai, proposed by J. Darragh and J. Cleary.
 
 m-Bonsai approaches:
-. . . . . . . . .
 1. m-Bonsai(recursive):
     Fast and compact approach.
 2. m-Bonsai (gamma):
@@ -34,11 +33,10 @@ To be able to compile the m-Bonsai libraries.
 
 Datasets
 -----------
-Given two datasets in the format of transaction database where each line
-is a sequence of characters.
-### Frequent Itemset Mining (FIM) dataset
-sortedAccidents  dataset is used for FIM applications taken from FIMI repository. http://fimi.ua.ac.be/data/
-###FASTQ format dataset
+Given two datasets in the format of transaction database where each line is a sequence of characters.
+1. Frequent Itemset Mining (FIM) dataset
+transSortedAccidents.dat  dataset is used for FIM applications taken from FIMI repository. http://fimi.ua.ac.be/data/
+2. FASTQ format dataset
 FASTQ format is a text-based format for storing both a biological sequence (usually nucleotide sequence) and its corresponding quality scores. Both the sequence letter and quality score are each encoded with a single ASCII character for brevity.
 We transformed each chararacter in the dataset from {A,G,C,T,N} to {0,1,2,3,4}.
 
