@@ -2,7 +2,7 @@ mame-Bonsai
 =========
 Description
 -----------
-m-Bonsai is a compact representation of tries using hashtables.
+mame-Bonsai or m-Bonsai is a compact representation of tries using hashtables.
 
 Making use of any mame-Bonsai or Bonsai implementation for research or commercial purposes, the reference will be:
 
@@ -15,6 +15,7 @@ Implementations:
 3. Bonsai, proposed by J. Darragh and J. Cleary.
 
 m-Bonsai approaches:
+. . . . . . . . .
 1. m-Bonsai(recursive):
     Fast and compact approach.
 2. m-Bonsai (gamma):
